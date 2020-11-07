@@ -1,8 +1,15 @@
 const express = require("express");
+/* Node Modules */
 const bodyParser = require('body-parser')
+const cors = require('cors')
+const Joi = require('joi') // do walidacji danych
+const mysql = require('mysql')
+/* Subfiles */
+const appCats = require("./api/cats")
+const appClimateData = require("./api/climate-data")
+const ApiScrapper = require("./apps/api-scrapper")
 
 const app = express();
-const cors = require('cors')
 
 var corsOptions = {
     origin: 'http://localhost:4200',
@@ -10,44 +17,45 @@ var corsOptions = {
 }
 
 app.use(cors(corsOptions))
-
-app.route('/api/cats').get((req, res) => {
-    res.send({
-        //cats: [{ name: 'lilly', color: 'black' }, { name: 'lucy', color: 'white' }, { name: 'brock', age: 12 }, { name: 'venturion', cyborg: true }],
-        cats: [{ name: 'lilly', color: 'black' }, { name: 'lucy', color: 'white' }]
-    })
-})
-
-
-app.route('/api/cats/:name').get((req, res) => {
-    const requestedCatName = req.params['name']
-    res.send({ name: requestedCatName })
-})
-
-
 app.use(bodyParser.json())
-app.route('/api/cats').post((req, res) => {
-    res.send(201, req.body)
-})
+app.use("/api/cats", appCats)
+app.use("/api/climate-data", appClimateData)
 
+// Every 10 seconds, visit other websites with climate data
+const apiScrapper = new ApiScrapper()
+const scrapperIntervalSeconds = 10;
+let interval = setInterval(() => { intervalCallback() }, scrapperIntervalSeconds * 1000);
+function intervalCallback() {
+    // Here you can use own class to get data from other sites
+    apiScrapper.scrap()
+}
+// clearInterval(interval)
+
+/* Ponizej example z użycia bazy danych */
+// var connection = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'inzynierka',
+//     database: 'mysql'
+// })
+
+// connection.connect()
+
+// connection.query('SELECT 1 + 1 AS solution', function (err, rows, fields) {
+//     if (err) throw err
+
+//     console.log('The solution is: ', rows[0].solution)
+// })
+
+// connection.end()
 
 // simple route
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to my backend." });
+    res.status(200).send(`Hello world`);
 });
 
-
-app.route('/api/cats/:name').put((req, res) => {
-    res.send(200, req.body)
-})
-
-
-app.route('/api/cats/:name').delete((req, res) => {
-    res.sendStatus(204)
-})
-
-
 // set port, listen for requests
-app.listen(8000, () => {
-    console.log('Server started!')
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server started on port ${port}!`)
 })
