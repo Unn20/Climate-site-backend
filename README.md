@@ -1,8 +1,12 @@
-# Backend
+# Climate-site server backend
 
-## 1.  Package installation -> npm install package_name
-	- npm install express --save  
-	- npm install cors --save  
-	- npm install body-parser --save  
+## 1.  Package installation
+	npm install
 
-## 2.  Run the server from terminal -> node server.js
+## 2.  Run the server from terminal
+    npm run serve
+
+
+#### Packages short description:
+ - nodemon - gives ability to rerun server everytime there is change in files.
+ - joi - very useful to validate requests from client
