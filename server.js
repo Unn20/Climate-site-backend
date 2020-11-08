@@ -7,7 +7,7 @@ const mysql = require('mysql')
 /* Subfiles */
 const appCats = require("./api/cats")
 const appClimateData = require("./api/climate-data")
-const ApiScrapper = require("./apps/api-scrapper")
+const GlobalWarmingService = require("./apps/global-warming-service")
 
 const app = express();
 
@@ -22,12 +22,12 @@ app.use("/api/cats", appCats)
 app.use("/api/climate-data", appClimateData)
 
 // Every 10 seconds, visit other websites with climate data
-const apiScrapper = new ApiScrapper()
+const globalWarmingService = new GlobalWarmingService(app)
 const scrapperIntervalSeconds = 10;
 let interval = setInterval(() => { intervalCallback() }, scrapperIntervalSeconds * 1000);
 function intervalCallback() {
     // Here you can use own class to get data from other sites
-    apiScrapper.scrap()
+    globalWarmingService.getData()
 }
 // clearInterval(interval)
 
