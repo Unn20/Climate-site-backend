@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const Joi = require('joi') // do walidacji danych
 const mysql = require('mysql')
+const cron = require('node-cron')
 /* Subfiles */
 const appCats = require("./api/cats")
 const appClimateData = require("./api/climate-data")
@@ -11,7 +12,7 @@ const GlobalWarmingService = require("./apps/global-warming-service")
 
 const app = express();
 
-var corsOptions = {
+const corsOptions = {
     origin: 'http://localhost:4200',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
@@ -21,15 +22,14 @@ app.use(bodyParser.json())
 app.use("/api/cats", appCats)
 app.use("/api/climate-data", appClimateData)
 
-// Every 10 seconds, visit other websites with climate data
+// Every minute, visit other websites with climate data
 const globalWarmingService = new GlobalWarmingService(app)
-const scrapperIntervalSeconds = 10;
-let interval = setInterval(() => { intervalCallback() }, scrapperIntervalSeconds * 1000);
-function intervalCallback() {
-    // Here you can use own class to get data from other sites
+
+var cronJob = cron.schedule("*/5 * * * * *", () => {
     globalWarmingService.getData()
-}
-// clearInterval(interval)
+    console.info('cron job completed');
+});
+cronJob.start();
 
 /* Ponizej example z użycia bazy danych */
 // var connection = mysql.createConnection({

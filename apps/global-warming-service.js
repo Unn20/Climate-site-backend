@@ -55,7 +55,7 @@ class GlobalWarmingService {
         };
         this.getJSON(options, (statusCode, result) => {
             // Process JSON here
-            // console.log(`onResult: (${statusCode})\n\n${JSON.stringify(result)}`);
+            console.log(`onResult: (${statusCode})\n\n${JSON.stringify(result)}`);
 
             if (statusCode === 200) {
                 console.log("Get data")
