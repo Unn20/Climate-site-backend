@@ -25,7 +25,7 @@ app.use("/api/climate-data", appClimateData)
 // Every minute, visit other websites with climate data
 const globalWarmingService = new GlobalWarmingService(app)
 
-var cronJob = cron.schedule("*/5 * * * * *", () => {
+var cronJob = cron.schedule("* */50 * * * *", () => {
     globalWarmingService.getData()
     console.info('cron job completed');
 });
