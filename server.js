@@ -9,7 +9,6 @@ const mysql = require('mysql')
 const appCats = require("./api/cats")
 const appClimateData = require("./api/climate-data")
 const appCounters = require("./api/counters")
-// const ApiScrapper = require("./apps/api-scrapper")
 const ClimateNasaGovScrapper = require("./apps/climate-nasa-gov-scrapper")
 
 const app = express();
@@ -29,13 +28,6 @@ app.use("/api/counters", appCounters)
 const climateNasaGovScrapper = new ClimateNasaGovScrapper()
 
 climateNasaGovScrapper.run(); // One time run
-
-// let interval = setInterval(() => { intervalCallback() }, scrapperIntervalSeconds * 1000);
-// function intervalCallback() {
-//     // Here you can use own class to get data from other sites
-//     apiScrapper.scrap()
-// }
-// clearInterval(interval)
 
 /* Ponizej example z użycia bazy danych */
 // var connection = mysql.createConnection({
