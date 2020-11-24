@@ -63,7 +63,7 @@ class GlobalWarmingService {
         });
     }
 
-    getJSON = (options, onResult) => {
+    getJSON(options, onResult) {
         console.log('rest::getJSON');
         const port = options.port == 443 ? https : http;
 
