@@ -8,7 +8,11 @@ const cron = require('node-cron')
 /* Subfiles */
 const appCats = require("./api/cats")
 const appClimateData = require("./api/climate-data")
+
 const GlobalWarmingService = require("./apps/global-warming-service")
+const appCounters = require("./api/counters")
+const ApiScrapper = require("./apps/api-scrapper")
+
 
 const app = express();
 
@@ -21,6 +25,7 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use("/api/cats", appCats)
 app.use("/api/climate-data", appClimateData)
+app.use("/api/counters", appCounters)
 
 // Every minute, visit other websites with climate data
 const globalWarmingService = new GlobalWarmingService(app)
