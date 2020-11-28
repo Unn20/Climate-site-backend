@@ -34,43 +34,156 @@ class GlobalWarmingService {
     }
     http = http
     https = https
+    options = {
+        host: this.metadata.url,
+        port: this.metadata.port,
+        method: this.metadata.method,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
 
     constructor(app) {
         this.app = app
     }
 
-    getData() {
-        this.scrapTemperature()
+    handleDatabase(resultJson) {
+        // funkcja wywoływana przy każdym zaciągnięciu danych z API
+        console.log(resultJson)
     }
 
-    scrapTemperature() {
-        const options = {
-            host: this.metadata.url,
-            port: this.metadata.port,
-            path: this.metadata.temperatureAPI,
-            method: this.metadata.method,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-        this.getJSON(options, (statusCode, result) => {
-            // Process JSON here
-            // console.log(`onResult: (${statusCode})\n\n${JSON.stringify(result)}`);
+    run() {
+        let resultJson = {
+            temperature: [],
+            carbonDioxide: [],
+            methane: [],
+            nitrousOxide: [],
+            arctic: []
+        }
 
-            if (statusCode === 200) {
-                console.log("Get data")
-            }
-        });
+        const promise1 = new Promise((resolve, reject) => {
+            this.options.path = this.metadata.temperatureAPI;
+            this.getJSON(this.options, (statusCode, result) => {
+                if (statusCode === 200) {
+                    resolve(result.result)
+                } else {
+                    reject("Error while fetching data from temperature API")
+                }
+            });
+        }).then((result) => {
+            result.forEach((item, index, array) => {
+                array[index].year = (array[index].time).split('.')[0]
+                array[index].month = Math.floor((parseFloat(array[index].time) - Math.floor(parseFloat(array[index].time))) * 12) + 1
+                delete array[index].time
+                array[index].station = parseFloat(array[index].station)
+                array[index].land = parseFloat(array[index].land)
+            })
+            resultJson.temperature = result
+        }).catch(err => {
+            console.log(err)
+        })
+
+        const promise2 = new Promise((resolve, reject) => {
+            this.options.path = this.metadata.carbionDioxideAPI;
+            this.getJSON(this.options, (statusCode, result) => {
+                if (statusCode === 200) {
+                    resolve(result.co2)
+                } else {
+                    reject("Error while fetching data from co2 API")
+                }
+            });
+        }).then((result) => {
+            result.forEach((item, index, array) => {
+                array[index].cycle = parseFloat(array[index].cycle)
+                array[index].trend = parseFloat(array[index].trend)
+            })
+            resultJson.carbonDioxide = result
+        }).catch(err => {
+            console.log(err)
+        })
+
+        const promise3 = new Promise((resolve, reject) => {
+            this.options.path = this.metadata.methaneAPI;
+            this.getJSON(this.options, (statusCode, result) => {
+                if (statusCode === 200) {
+                    resolve(result.methane)
+                } else {
+                    reject("Error while fetching data from methane API")
+                }
+            });
+        }).then((result) => {
+            result.forEach((item, index, array) => {
+                const oldDate = (array[index].date).split('.')
+                delete array[index].date
+
+                array[index].year = oldDate[0]
+                array[index].month = oldDate[1]
+
+                array[index].average = parseFloat(array[index].average)
+                array[index].trend = parseFloat(array[index].trend)
+                array[index].averageUnc = parseFloat(array[index].averageUnc)
+                array[index].trendUnc = parseFloat(array[index].trendUnc)
+            })
+            resultJson.methane = result
+        }).catch(err => {
+            console.log(err)
+        })
+
+        const promise4 = new Promise((resolve, reject) => {
+            this.options.path = this.metadata.nitrousOxideAPI;
+            this.getJSON(this.options, (statusCode, result) => {
+                if (statusCode === 200) {
+                    resolve(result.nitrous)
+                } else {
+                    reject("Error while fetching data from nitrous oxide API")
+                }
+            });
+        }).then((result) => {
+            result.forEach((item, index, array) => {
+                const oldDate = (array[index].date).split('.')
+                delete array[index].date
+                array[index].year = oldDate[0]
+                array[index].month = oldDate[1]
+
+                array[index].average = parseFloat(array[index].average)
+                array[index].trend = parseFloat(array[index].trend)
+                array[index].averageUnc = parseFloat(array[index].averageUnc)
+                array[index].trendUnc = parseFloat(array[index].trendUnc)
+            })
+            resultJson.nitrousOxide = result
+        }).catch(err => {
+            console.log(err)
+        })
+
+        const promise5 = new Promise((resolve, reject) => {
+            this.options.path = this.metadata.meltedIceCapAPI;
+            this.getJSON(this.options, (statusCode, result) => {
+                if (statusCode === 200) {
+                    resolve(result.result)
+                } else {
+                    reject("Error while fetching data from arctic API")
+                }
+            });
+        }).then((result) => {
+            resultJson.arctic = result
+        }).catch(err => {
+            console.log(err)
+        })
+
+        Promise.all([promise1, promise2, promise3, promise4, promise5]).then((values) => {
+            this.handleDatabase(resultJson)
+        })
     }
+
 
     getJSON(options, onResult) {
-        console.log('rest::getJSON');
+        // console.log('rest::getJSON');
         const port = options.port == 443 ? https : http;
 
         let output = '';
 
         const req = port.request(options, (res) => {
-            console.log(`${options.host} : ${res.statusCode}`);
+            // console.log(`${options.host} : ${res.statusCode}`);
             res.setEncoding('utf8');
 
             res.on('data', (chunk) => {
