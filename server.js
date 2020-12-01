@@ -4,16 +4,20 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const Joi = require('joi') // do walidacji danych
 const mysql = require('mysql')
+const cron = require('node-cron')
 
 /* Subfiles */
 const appCats = require("./api/cats")
 const appClimateData = require("./api/climate-data")
+
+const GlobalWarmingService = require("./apps/global-warming-service")
 const appCounters = require("./api/counters")
 const ClimateNasaGovScrapper = require("./apps/climate-nasa-gov-scrapper")
 
+
 const app = express();
 
-var corsOptions = {
+const corsOptions = {
     origin: 'http://localhost:4200',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
@@ -28,6 +32,14 @@ app.use("/api/counters", appCounters)
 const climateNasaGovScrapper = new ClimateNasaGovScrapper()
 
 climateNasaGovScrapper.run(); // One time run
+// Every minute, visit other websites with climate data
+const globalWarmingService = new GlobalWarmingService(app)
+
+var cronJob = cron.schedule("*/10 * * * * *", () => {
+    globalWarmingService.run()
+    console.info('cron job completed');
+});
+cronJob.start();
 
 /* Ponizej example z użycia bazy danych */
 // var connection = mysql.createConnection({
