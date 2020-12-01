@@ -4,11 +4,12 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const Joi = require('joi') // do walidacji danych
 const mysql = require('mysql')
+
 /* Subfiles */
 const appCats = require("./api/cats")
 const appClimateData = require("./api/climate-data")
 const appCounters = require("./api/counters")
-const ApiScrapper = require("./apps/api-scrapper")
+const ClimateNasaGovScrapper = require("./apps/climate-nasa-gov-scrapper")
 
 const app = express();
 
@@ -24,14 +25,9 @@ app.use("/api/climate-data", appClimateData)
 app.use("/api/counters", appCounters)
 
 // Every 10 seconds, visit other websites with climate data
-const apiScrapper = new ApiScrapper()
-const scrapperIntervalSeconds = 10;
-let interval = setInterval(() => { intervalCallback() }, scrapperIntervalSeconds * 1000);
-function intervalCallback() {
-    // Here you can use own class to get data from other sites
-    apiScrapper.scrap()
-}
-// clearInterval(interval)
+const climateNasaGovScrapper = new ClimateNasaGovScrapper()
+
+climateNasaGovScrapper.run(); // One time run
 
 /* Ponizej example z użycia bazy danych */
 // var connection = mysql.createConnection({
