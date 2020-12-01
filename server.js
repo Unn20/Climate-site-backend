@@ -36,7 +36,7 @@ climateNasaGovScrapper.run(); // One time run
 const globalWarmingService = new GlobalWarmingService(app)
 
 var cronJob = cron.schedule("*/10 * * * * *", () => {
-    globalWarmingService.run()
+    // globalWarmingService.run()   commented out to prevent fetching data from API every 10sec
     console.info('cron job completed');
 });
 cronJob.start();
