@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const Joi = require('joi') // do walidacji danych
+const fs = require('fs');
 const mysql = require('mysql')
 const cron = require('node-cron')
 
@@ -28,15 +29,30 @@ app.use("/api/cats", appCats)
 app.use("/api/climate-data", appClimateData)
 app.use("/api/counters", appCounters)
 
+
+/* Ponizej example z użycia bazy danych */
+// var database_connection = mysql.createConnection({
+var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamknie polaczenie trzeba tworzyc nowe nie mozna kilku queries na raz itp
+    host: 'backend-database.cwatox5ynlgb.eu-central-1.rds.amazonaws.com',
+    user: 'admin',
+    password: '3edcvfr4', // FIXME: UKRYWANIE HASEL!
+    database: 'CLIMATE_DATA',
+    // ssl: {
+    //     ca: fs.readFileSync(__dirname + '/ssl/rds-ca-2019-eu-central-1.pem')
+    // } //FIXME:
+})
+
+
 // Every 10 seconds, visit other websites with climate data
 const climateNasaGovScrapper = new ClimateNasaGovScrapper()
 
 climateNasaGovScrapper.run(); // One time run
 // Every minute, visit other websites with climate data
-const globalWarmingService = new GlobalWarmingService(app)
+const globalWarmingService = new GlobalWarmingService(app, database_connection) //TODO: DODAJ connection
 
 var cronJob = cron.schedule("*/10 * * * * *", () => {
-    // globalWarmingService.run()   commented out to prevent fetching data from API every 10sec
+
+    globalWarmingService.run()   //commented out to prevent fetching data from API every 10sec
     console.info('cron job completed');
 });
 cronJob.start();
