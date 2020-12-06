@@ -66,7 +66,8 @@ class GlobalWarmingService {
         
         // console.log(resultJson)
 
-        // TODO: CZY CZYSCIC TABELE PRZED WRZUCENIEM DANYCH!?
+        // APPEND THE DIFFS OF DATA
+        // DATA VALIDATION
 
         for (let key of Object.keys(resultJson)) {
             let data_list = resultJson[key]
