@@ -76,22 +76,22 @@ class GlobalWarmingService {
             let table_name = this.api_database_mapping[key]
             // let sql = `INSERT INTO ${table_name} ('` + Object.keys(data_list[0]).join("','") + "') VALUES ?";
             
-            let truncate_sql = `TRUNCATE ${table_name}`
+            // let truncate_sql = `TRUNCATE ${table_name}`
 
-            let sql = `INSERT INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
+            let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
             // Get connection per query
             this.database_connection.getConnection(function(err, connection) {
                 if(err) { 
                   console.log(err); 
                 }        
 
-                connection.query(truncate_sql, (err, results) => {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        console.log(`Table data: ${table_name} cleared`);
-                    }
-                });
+                // connection.query(truncate_sql, (err, results) => {
+                //     if (err) {
+                //         console.log(err)
+                //     } else {
+                //         console.log(`Table data: ${table_name} cleared`);
+                //     }
+                // });
 
                 connection.query(sql, [values_list], (err, results) => {
                 connection.release();
