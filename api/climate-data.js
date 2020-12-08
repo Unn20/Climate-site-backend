@@ -2,13 +2,14 @@ const express = require("express");
 const dataBaseConnector = require("../database/data-base-connector");
 const appClimateData = express();
 
+
 appClimateData.route('/').get((req, res) => {
     res.send("data")
 })
 
 
 function getTemperatureData(){
-    dataBaseConnector.get_table_data_from_db('SELECT * FROM temperature', function(rows) {
+    return dataBaseConnector.get_table_data_from_db('SELECT * FROM temperature', function(rows) {
         return rows
     })
 };

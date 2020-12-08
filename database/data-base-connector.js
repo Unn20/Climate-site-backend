@@ -1,6 +1,7 @@
 const mysql = require('mysql')
 
 
+
 /* Ponizej example z użycia bazy danych */
 // var database_connection = mysql.createConnection({
 var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamknie polaczenie trzeba tworzyc nowe nie mozna kilku queries na raz itp
@@ -40,7 +41,7 @@ function save_data_from_apis(resultJson, api_database_mapping){
         )}
 };
 
-function get_table_data_from_db(query){
+function get_table_data_from_db(query, callback){
     // table_name = 'temperature'
     // let sql = `SELECT * FROM ${table_name}`;
     database_connection.getConnection(function(err, connection) {
@@ -53,12 +54,13 @@ function get_table_data_from_db(query){
             console.log(err)
         } else {
             // console.log(`Fetched temp ${JSON.stringify(rows)}`);
-            return JSON.stringify(rows)
+            return callback(JSON.stringify(rows))
         }});
     })
 };
 
+
 module.exports = {
     save_data_from_apis: save_data_from_apis,
-    get_table_data_from_db: get_table_data_from_db
+    get_table_data_from_db: get_table_data_from_db,
 }

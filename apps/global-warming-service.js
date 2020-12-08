@@ -22,6 +22,7 @@ const http = require('http');
 const https = require('https');
 const dataBaseConnector = require("../database/data-base-connector");
 
+
 class GlobalWarmingService {
     metadata = {
         url: "global-warming.org",
