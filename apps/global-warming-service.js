@@ -49,7 +49,7 @@ class GlobalWarmingService {
         temperature: 'temperature',
         carbonDioxide: 'carbon_dioxide',
         methane: 'methane',
-        nitrousOxide: 'nitrious_oxide',
+        nitrousOxide: 'nitrous_oxide',
         arctic: 'arctic'
     }
 

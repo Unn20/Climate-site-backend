@@ -34,14 +34,14 @@ CREATE TABLE methane(
 );
 
 
-CREATE TABLE nitrious_oxide(
+CREATE TABLE nitrous_oxide(
     year VARCHAR(10),
     month VARCHAR(2),
     average FLOAT,
     trend FLOAT,
     averageUnc FLOAT,
     trendUnc FLOAT,
-    CONSTRAINT Pk_Nitrious_Oxide PRIMARY KEY (year, month, average, trend, averageUnc, trendUnc)
+    CONSTRAINT Pk_Nitrous_Oxide PRIMARY KEY (year, month, average, trend, averageUnc, trendUnc)
 );
 
 

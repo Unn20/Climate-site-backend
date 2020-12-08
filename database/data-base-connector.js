@@ -41,23 +41,41 @@ function save_data_from_apis(resultJson, api_database_mapping){
         )}
 };
 
-function get_table_data_from_db(query, callback){
+async function get_table_data_from_db(query){
     // table_name = 'temperature'
     // let sql = `SELECT * FROM ${table_name}`;
-    database_connection.getConnection(function(err, connection) {
-        if(err) { 
-            console.log(err); 
-        }        
-        connection.query(query, (err, rows) => {
-            connection.release();
-        if (err) {
-            console.log(err)
-        } else {
-            // console.log(`Fetched temp ${JSON.stringify(rows)}`);
-            return callback(JSON.stringify(rows))
-        }});
+
+    return new Promise((resolve, reject) => {
+        database_connection.getConnection(async (err, connection) => {
+            if (err){
+                reject(err)
+            }
+            connection.query(query, (err2, rows) => {
+                connection.release();
+            if (err2) {
+                console.log(err2)
+            }
+            resolve(JSON.stringify(rows))
+        });
+      })
     })
-};
+}
+
+//     database_connection.getConnection(function(err, connection) {
+//         if(err) { 
+//             console.log(err); 
+//         }        
+//         connection.query(query, (err, rows) => {
+//             connection.release();
+//         if (err) {
+//             console.log(err)
+//         } else {
+//             // console.log(`Fetched temp ${JSON.stringify(rows)}`);
+//             return JSON.stringify(rows)
+//         }});
+//     })
+// };
+
 
 
 module.exports = {
