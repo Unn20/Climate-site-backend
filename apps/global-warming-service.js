@@ -18,8 +18,9 @@ Melted Polar Ice Cap: https://global-warming.org/api/arctic-api
 New data appears every one year. Data is gathered since 1979
 */
 
-const http = require('http')
-const https = require('https')
+const http = require('http');
+const https = require('https');
+const dataBaseConnector = require("../database/data-base-connector");
 
 class GlobalWarmingService {
     metadata = {
@@ -51,48 +52,18 @@ class GlobalWarmingService {
         arctic: 'arctic'
     }
 
-    constructor(app, connection) {
+    constructor(app) {
         this.app = app
-        this.database_connection = connection
     }
 
     // funkcja wywoływana przy każdym zaciągnięciu danych z API
     handleDatabase(resultJson) {
-
         // console.log(resultJson)
-
         // Method to change key names in an object
         // resultJson.temperature = resultJson.temperature.map(({ time: year_day, ...rest }) => ({ year_day, ...rest }));
         
-        // console.log(resultJson)
-
-        // APPEND THE DIFFS OF DATA
-        // DATA VALIDATION
-
-        for (let key of Object.keys(resultJson)) {
-            let data_list = resultJson[key]
-            let values_list = data_list.map(Object.values);
-            if (data_list.length == 0) continue  //PRINT ERROR? 
-            let table_name = this.api_database_mapping[key]
-            // let sql = `INSERT INTO ${table_name} ('` + Object.keys(data_list[0]).join("','") + "') VALUES ?";
-            
-            // let truncate_sql = `TRUNCATE ${table_name}`
-
-            let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
-            // Get connection per query
-            this.database_connection.getConnection(function(err, connection) {
-                if(err) { 
-                  console.log(err); 
-                }        
-                connection.query(sql, [values_list], (err, results) => {
-                connection.release();
-                if (err) {
-                    console.log(err)
-                } else {
-                    console.log(`Data inserted into ${table_name}`);
-                }
-            });}
-            )}
+        // TODO: !!!! DATA VALIDATION
+        dataBaseConnector.save_data_from_apis(resultJson, this.api_database_mapping);
     }
 
     run() {
