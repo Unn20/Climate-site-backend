@@ -43,20 +43,6 @@ var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamkni
 })
 
 
-// WYSWIETLANIE DANYCH JAK COS
-// database_connection.getConnection(function(err, connection) {
-//     if(err) { 
-//       console.log(err); 
-//     }        
-
-//     connection.query("SELECT * FROM temperature", (err, result, fields)=>{
-//         connection.release();
-//         if (err) throw err;
-//         console.log(result);
-//       });
-// });
-
-
 
 // Every 10 seconds, visit other websites with climate data
 const climateNasaGovScrapper = new ClimateNasaGovScrapper()

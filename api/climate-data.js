@@ -5,6 +5,32 @@ appClimateData.route('/').get((req, res) => {
     res.send("data")
 })
 
+var dataBasePool = null
+
+module.exports.initializeDB = function (db) {
+    dataBasePool = db
+}
+
+
+function getTemperatureData(){
+    table_name = 'temperature'
+    let sql = `SELECT * FROM ${table_name}`;
+    dataBasePool.getConnection(function(err, connection) {
+        if(err) { 
+            console.log(err); 
+        }        
+        connection.query(sql, (err, result, fields) => {
+            connection.release();
+        if (err) {
+            console.log(err)
+        } else {
+            console.log(`Fetched temp ${result['result']}`);
+            return result['result']
+        }});
+    })
+};
+
+
 temperatureFakeData = {
     "temperature": [
         { "time": "2015.88", "station": "1.27", "land": "1.05" }, { "time": "2015.96", "station": "1.47", "land": "1.15" },
@@ -138,7 +164,7 @@ arcticFakeData = {
 }
 
 appClimateData.route('/temperature').get((req, res) => {
-    res.send(temperatureFakeData)
+    res.send(getTemperatureData())
 })
 
 appClimateData.route('/co2').get((req, res) => {

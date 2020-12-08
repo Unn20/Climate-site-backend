@@ -84,15 +84,6 @@ class GlobalWarmingService {
                 if(err) { 
                   console.log(err); 
                 }        
-
-                // connection.query(truncate_sql, (err, results) => {
-                //     if (err) {
-                //         console.log(err)
-                //     } else {
-                //         console.log(`Table data: ${table_name} cleared`);
-                //     }
-                // });
-
                 connection.query(sql, [values_list], (err, results) => {
                 connection.release();
                 if (err) {
