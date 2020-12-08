@@ -9,33 +9,33 @@ appClimateData.route('/').get((req, res) => {
 
 
 function getTemperatureData(){
-    return dataBaseConnector.get_table_data_from_db('SELECT * FROM temperature', function(rows) {
-        return rows
+    dataBaseConnector.get_table_data_from_db('SELECT * FROM temperature', function(rows) {
+        return [{'temp': rows}];
     })
 };
 
 
 function getCarbonDioxideData(){
     dataBaseConnector.get_table_data_from_db('SELECT * FROM carbon_dioxide', function(rows) {
-        return rows
+        return rows;
     })
 };
 
 function getMethaneData(){
     dataBaseConnector.get_table_data_from_db('SELECT * FROM methane', function(rows) {
-        return rows
+        return rows;
     })
 };
 
 function getNitriousOxideData(){
     dataBaseConnector.get_table_data_from_db('SELECT * FROM nitrious_oxide', function(rows) {
-        return rows
+        return rows;
     })
 };
 
 function getArcticData(){
     dataBaseConnector.get_table_data_from_db('SELECT * FROM arctic', function(rows) {
-        return rows
+        return rows;
     })
 };
 
