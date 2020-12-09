@@ -4,7 +4,8 @@
   "description": "Angular Backend",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,13 @@
   "homepage": "https://gitlab.com/inzynierka3/backend#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.3",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "joi": "^17.3.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.6",
+    "urllib": "^2.36.1",
+    "node-cron": "^2.0.3"
   }
 }
