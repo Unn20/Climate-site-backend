@@ -2,15 +2,12 @@
 
 set -e
 
-
-
 rm -rf /home/ubuntu/backend/
 
 mkdir /home/ubuntu/backend
 cd /home/ubuntu/backend
 
-git checkout master
-git pull https://gitlab.com/inzynierka3/backend.git
+git clone https://gitlab.com/inzynierka3/backend.git
 
 PATH=/home/ubuntu/node/bin:$PATH
 
