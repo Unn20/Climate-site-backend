@@ -7,7 +7,7 @@ rm -rf /home/ubuntu/backend/
 mkdir /home/ubuntu/backend
 cd /home/ubuntu/backend
 
-git clone pawel.kryczka@https://gitlab.com/inzynierka3/backend.git
+git clone pawel.kryczka@gitlab.com:inzynierka3/backend.git
 
 PATH=/home/ubuntu/node/bin:$PATH
 
