@@ -17,6 +17,3 @@ cd /home/ubuntu/backend
 npm install
 
 pm2 start server.js --name backend --watch
-
-#Restart the node server
-npm start
