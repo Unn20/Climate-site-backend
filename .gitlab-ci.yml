@@ -8,7 +8,7 @@ before_script:
   - npm install
 
 stages:
-  - run
+  # - run
   - deploy
 
 # test: 
@@ -16,18 +16,18 @@ stages:
 #   script:
 #     - npm run test
 
-run:
-  only:
-    - master
-    - ci_cd
-  stage: run
-  script:
-    - npm run serve
+# run:
+#   only:
+#     - master
+#     - ci_cd
+#   stage: run
+#   script:
+#     - npm run serve
 
 deplotToAWS:
   only:
     - master
-    - ci_cd
+    # - ci_cd
   stage: deploy
   script:
     - bash deploy/deploy.sh
