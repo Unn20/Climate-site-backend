@@ -2,9 +2,7 @@
 
 set -e
 
-pm2 stop server.js
-
-pm2 delete server.js
+pm2 delete backend 2 > /dev/null
 
 rm -rf /home/ubuntu/backend/
 
@@ -18,7 +16,7 @@ cd /home/ubuntu/backend
 
 npm install
 
-pm2 start server.js
+pm2 start server.js --name backend --watch
 
 #Restart the node server
 npm start
