@@ -2,7 +2,7 @@
 
 set -e
 
-pm2 delete backend 2 > /dev/null
+pm2 delete backend 2 > /dev/null || true
 
 rm -rf /home/ubuntu/backend/
 
