@@ -1,5 +1,5 @@
 const mysql = require('mysql')
-
+const fs = require('fs');
 
 
 /* Ponizej example z użycia bazy danych */
