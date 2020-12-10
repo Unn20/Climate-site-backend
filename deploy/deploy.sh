@@ -2,7 +2,6 @@
 
 set -e
 
-eval $(ssh-agent -s)
 echo "$BACKEND_KEY" | tr -d '\r' | ssh-add - > /dev/null
 
 DEPLOY_SERVER=$DEPLOY_SERVER
