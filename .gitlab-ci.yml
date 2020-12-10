@@ -8,12 +8,21 @@ before_script:
   - npm install
 
 stages:
+  - run
   - deploy
 
 # test: 
 #   stage: test
 #   script:
 #     - npm run test
+
+run:
+  only:
+    - master
+    - ci_cd
+  stage: run
+  script:
+    - npm run serve
 
 deplotToAWS:
   only:
