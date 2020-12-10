@@ -15,7 +15,6 @@ stages:
 deplotToAWS:
   only:
     - master
-    - ci_cd
   stage: deploy
   script:
     - bash deploy/deploy.sh
