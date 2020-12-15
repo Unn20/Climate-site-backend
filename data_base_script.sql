@@ -2,14 +2,14 @@
 CREATE OR REPLACE DATABASE CLIMATE_DATA;
 USE CLIMATE_DATA;
 
---TOOD: obczaj DANE W STRINGACH ALE ARCTIC WE FLOATACH??
+--TOOD: obczaj DANE W STRINGACH ALE ARCTIC WE DOUBLEACH??
 
 
 CREATE TABLE temperature(
     year VARCHAR(10),
     month TINYINT,
-    station FLOAT,
-    land FLOAT,
+    station DOUBLE,
+    land DOUBLE,
     CONSTRAINT Pk_Temperature PRIMARY KEY (year, month, station, land)
 );
 
@@ -17,8 +17,8 @@ CREATE TABLE carbon_dioxide(
     year VARCHAR(10),
     month TINYINT,
     day TINYINT,
-    cycle FLOAT,
-    trend FLOAT,
+    cycle DOUBLE,
+    trend DOUBLE,
     CONSTRAINT Pk_Carbon_Dioxide PRIMARY KEY (year, month, day, cycle, trend)
 );
 
@@ -26,10 +26,10 @@ CREATE TABLE carbon_dioxide(
 CREATE TABLE methane(
     year VARCHAR(10),
     month VARCHAR(2),
-    average FLOAT,
-    trend FLOAT,
-    averageUnc FLOAT,
-    trendUnc FLOAT,
+    average DOUBLE,
+    trend DOUBLE,
+    averageUnc DOUBLE,
+    trendUnc DOUBLE,
     CONSTRAINT Pk_Methane PRIMARY KEY (year, month, average, trend, averageUnc, trendUnc)
 );
 
@@ -37,18 +37,18 @@ CREATE TABLE methane(
 CREATE TABLE nitrous_oxide(
     year VARCHAR(10),
     month VARCHAR(2),
-    average FLOAT,
-    trend FLOAT,
-    averageUnc FLOAT,
-    trendUnc FLOAT,
+    average DOUBLE,
+    trend DOUBLE,
+    averageUnc DOUBLE,
+    trendUnc DOUBLE,
     CONSTRAINT Pk_Nitrous_Oxide PRIMARY KEY (year, month, average, trend, averageUnc, trendUnc)
 );
 
 
 CREATE TABLE arctic(
     year VARCHAR(10),
-    extent FLOAT,
-    area FLOAT,
+    extent DOUBLE,
+    area DOUBLE,
     CONSTRAINT Pk_Arctic PRIMARY KEY (year, extent, area)
 );
 
