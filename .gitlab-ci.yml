@@ -6,6 +6,7 @@ before_script:
   - eval $(ssh-agent -s)
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   - npm install
+  - npm install pm2
 
 stages:
   # - run
@@ -24,10 +25,10 @@ stages:
 #   script:
 #     - npm run serve
 
-deplotToAWS:
+deployToAWS:
   only:
+    - development
     - master
-    # - ci_cd
   stage: deploy
   script:
     - bash deploy/deploy.sh
