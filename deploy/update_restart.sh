@@ -2,7 +2,6 @@
 
 set -e
 
-
 pm2 stop backend 2 > /dev/null || true
 
 cd /home/ubuntu/backend/

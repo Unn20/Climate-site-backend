@@ -10,7 +10,7 @@ CREATE TABLE temperature(
     month TINYINT,
     station DOUBLE,
     land DOUBLE,
-    CONSTRAINT Pk_Temperature PRIMARY KEY (year, month, station, land)
+    CONSTRAINT Pk_Temperature PRIMARY KEY (year, month)
 );
 
 CREATE TABLE carbon_dioxide(
@@ -19,7 +19,7 @@ CREATE TABLE carbon_dioxide(
     day TINYINT,
     cycle DOUBLE,
     trend DOUBLE,
-    CONSTRAINT Pk_Carbon_Dioxide PRIMARY KEY (year, month, day, cycle, trend)
+    CONSTRAINT Pk_Carbon_Dioxide PRIMARY KEY (year, month, day)
 );
 
 
@@ -30,7 +30,7 @@ CREATE TABLE methane(
     trend DOUBLE,
     averageUnc DOUBLE,
     trendUnc DOUBLE,
-    CONSTRAINT Pk_Methane PRIMARY KEY (year, month, average, trend, averageUnc, trendUnc)
+    CONSTRAINT Pk_Methane PRIMARY KEY (year, month)
 );
 
 
@@ -41,7 +41,7 @@ CREATE TABLE nitrous_oxide(
     trend DOUBLE,
     averageUnc DOUBLE,
     trendUnc DOUBLE,
-    CONSTRAINT Pk_Nitrous_Oxide PRIMARY KEY (year, month, average, trend, averageUnc, trendUnc)
+    CONSTRAINT Pk_Nitrous_Oxide PRIMARY KEY (year, month)
 );
 
 
@@ -49,7 +49,7 @@ CREATE TABLE arctic(
     year VARCHAR(10),
     extent DOUBLE,
     area DOUBLE,
-    CONSTRAINT Pk_Arctic PRIMARY KEY (year, extent, area)
+    CONSTRAINT Pk_Arctic PRIMARY KEY (year)
 );
 
 
