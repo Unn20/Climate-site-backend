@@ -27,7 +27,6 @@ stages:
 
 deployToAWS:
   only:
-    - development
     - master
   stage: deploy
   script:
