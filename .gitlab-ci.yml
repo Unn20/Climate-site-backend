@@ -24,7 +24,7 @@ stages:
 #   script:
 #     - npm run serve
 
-deplotToAWS:
+deployToAWS:
   only:
     - master
     # - ci_cd
