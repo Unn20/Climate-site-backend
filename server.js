@@ -3,7 +3,6 @@ const express = require("express");
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const Joi = require('joi') // do walidacji danych
-const fs = require('fs');
 // const mysql = require('mysql')
 const cron = require('node-cron')
 

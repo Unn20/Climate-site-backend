@@ -1,0 +1,33 @@
+image: node:latest
+
+before_script:
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - mkdir -p ~/.ssh
+  - eval $(ssh-agent -s)
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - npm install
+  - npm install pm2
+
+stages:
+  # - run
+  - deploy
+
+# test: 
+#   stage: test
+#   script:
+#     - npm run test
+
+# run:
+#   only:
+#     - master
+#     - ci_cd
+#   stage: run
+#   script:
+#     - npm run serve
+
+deployToAWS:
+  only:
+    - master
+  stage: deploy
+  script:
+    - bash deploy/deploy.sh
