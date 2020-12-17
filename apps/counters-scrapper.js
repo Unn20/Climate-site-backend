@@ -28,17 +28,20 @@ class CountersScrapper {
     }
 
     async aRun() {
-        const countersData = [];
+        const countersData = {co2: 0, meltedIce: 0, terajoulesUsed: 0, wasteDumped: 0,
+            resourcesExtracted: 0, plasticInOcean: 0};
         const browser = await puppeteer.launch().catch((e) => {console.log(e);});
         const page = await browser.newPage().catch((e) => {console.log(e);});
 
-        for (const [, url] of Object.entries(this.urls)) {
+        for (const [key, url] of Object.entries(this.urls)) {
             await page.goto(url).catch((e) => {console.log(e);});
             await page.waitForNavigation({timeout:4000}).catch(() => {});
             const value = await this.getCounterValue(page).catch((e) => {console.log(e);});
 
-            countersData.push(value);
+            countersData[key] = value;
         }
+
+        console.log(countersData);
 
         this.fillDatabase(countersData);
     }
