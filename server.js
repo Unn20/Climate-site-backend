@@ -13,6 +13,7 @@ const appClimateData = require("./api/climate-data")
 const GlobalWarmingService = require("./apps/global-warming-service")
 const appCounters = require("./api/counters")
 const ClimateNasaGovScrapper = require("./apps/climate-nasa-gov-scrapper")
+const CountersScrapper = require("./apps/counters-scrapper")
 
 
 const app = express();
@@ -34,6 +35,11 @@ const climateNasaGovScrapper = new ClimateNasaGovScrapper()
 
 climateNasaGovScrapper.run(); // One time run
 // Every minute, visit other websites with climate data
+
+const countersScrapper = new CountersScrapper()
+
+countersScrapper.run();
+
 const globalWarmingService = new GlobalWarmingService(app)
 
 var cronJob = cron.schedule("*/10 * * * * *", () => {

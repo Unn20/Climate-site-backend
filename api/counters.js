@@ -8,10 +8,7 @@ const appCounters = express();
 // 4. tons of waste dumped https://www.theworldcounts.com/challenges/planet-earth/state-of-the-planet/world-waste-facts/story
 // 5. tons of resorces extracted from earth https://www.theworldcounts.com/challenges/planet-earth/state-of-the-planet/resources-extracted-from-earth/story
 // 6. tons of plastic dumped in oceans https://www.theworldcounts.com/challenges/planet-earth/oceans/plastic-in-the-ocean/story
-// section.hero div.column div button - index=3 - button to press
-// section.hero div.counter - wartość licznika
 const countersData = [11086000, 1925080, 198150, 5464000, 228391000, 32765]
-// https://www.theworldcounts.com/challenges/climate-change/global-warming/global-co2-emissions/story
 
 appCounters.route('/').get((req, res) => {
     res.send(countersData)
