@@ -24,8 +24,9 @@
     "express": "^4.17.1",
     "joi": "^17.3.0",
     "mysql": "^2.18.1",
+    "node-cron": "^2.0.3",
     "nodemon": "^2.0.6",
-    "urllib": "^2.36.1",
-    "node-cron": "^2.0.3"
+    "puppeteer": "^5.5.0",
+    "urllib": "^2.36.1"
   }
 }
