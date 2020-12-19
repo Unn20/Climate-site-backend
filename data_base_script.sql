@@ -5,7 +5,7 @@ USE CLIMATE_DATA;
 --TOOD: obczaj DANE W STRINGACH ALE ARCTIC WE FLOATACH??
 
 
-CREATE TABLE temperature(
+CREATE OR REPLACE TABLE temperature(
     year VARCHAR(10),
     month TINYINT,
     station FLOAT,
@@ -13,7 +13,7 @@ CREATE TABLE temperature(
     CONSTRAINT Pk_Temperature PRIMARY KEY (year, month, station, land)
 );
 
-CREATE TABLE carbon_dioxide(
+CREATE OR REPLACE TABLE carbon_dioxide(
     year VARCHAR(10),
     month TINYINT,
     day TINYINT,
@@ -23,7 +23,7 @@ CREATE TABLE carbon_dioxide(
 );
 
 
-CREATE TABLE methane(
+CREATE OR REPLACE TABLE methane(
     year VARCHAR(10),
     month VARCHAR(2),
     average FLOAT,
@@ -34,7 +34,7 @@ CREATE TABLE methane(
 );
 
 
-CREATE TABLE nitrous_oxide(
+CREATE OR REPLACE TABLE nitrous_oxide(
     year VARCHAR(10),
     month VARCHAR(2),
     average FLOAT,
@@ -45,7 +45,7 @@ CREATE TABLE nitrous_oxide(
 );
 
 
-CREATE TABLE arctic(
+CREATE OR REPLACE TABLE arctic(
     year VARCHAR(10),
     extent FLOAT,
     area FLOAT,
@@ -53,34 +53,13 @@ CREATE TABLE arctic(
 );
 
 
-CREATE TABLE counters(
-    counter0 INT,
-    counter1 INT,
-    counter2 INT,
-    counter3 INT,
-    counter4 INT,
-    counter5 INT
+CREATE OR REPLACE TABLE counters(
+    id TIMESTAMP default current_timestamp,
+    carbon_dioxide INT UNSIGNED,
+    melted_ice INT UNSIGNED,
+    tera_joules_used INT UNSIGNED,
+    waste_dumped INT UNSIGNED,
+    resources_extracted INT UNSIGNED,
+    plastic_in_ocean INT UNSIGNED,
+    CONSTRAINT Pk_Counters PRIMARY KEY (id)
 );
-
--- temperatureFakeData
---    { "time": "2019.21", "station": "1.45", "land": "1.18" }, 
-
--- co2FakeData = {
---     "co2": [
---         { "year": "2020", "month": "10", "day": "31", "cycle": "412.73", "trend": "413.39" },
-     
--- methaneFakeData = {
---     "methane": [
---         { "date": "2018.11", "average": "1866.2", "trend": "1860.8", "averageUnc": "1.1", "trendUnc": "0.8" },
-      
-
--- nitrousOxideFakeData = {
---     "nitrous": [
---         { "date": "2018.11", "average": "331.5", "trend": "331.3", "averageUnc": "0.2", "trendUnc": "0.2" },
-     
-
--- arcticFakeData = {
---     "result": [
---         { "year": "1979", "extent": 7.05, "area": 4.58 }, { "year": "1980", "extent": 7.67, "area": 4.87 },
-       
-       

@@ -1,18 +1,21 @@
 const mysql = require('mysql')
 const fs = require('fs');
+const path = require('path');
 
+console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString())
 
 /* Ponizej example z użycia bazy danych */
 // var database_connection = mysql.createConnection({
 var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamknie polaczenie trzeba tworzyc nowe nie mozna kilku queries na raz itp
     host: 'backend-database.cwatox5ynlgb.eu-central-1.rds.amazonaws.com',
-    user: 'admin',
-    password: '3edcvfr4', // FIXME: UKRYWANIE HASEL!
+    user: 'simple_user',
+    password: 'LKlni7G83g82NB37asaw', // FIXME: UKRYWANIE HASEL!
     database: 'CLIMATE_DATA',
-    // ssl: {
-    //     ca: fs.readFileSync(__dirname + '/ssl/rds-ca-2019-eu-central-1.pem')
-    // } //FIXME:
+    ssl: {
+        ca: fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString()
+    }
 })
+
 
 function save_data_from_apis(resultJson, api_database_mapping){
     for (let key of Object.keys(resultJson)) {
@@ -80,5 +83,5 @@ async function get_table_data_from_db(query){
 
 module.exports = {
     save_data_from_apis: save_data_from_apis,
-    get_table_data_from_db: get_table_data_from_db,
-}
+    get_table_data_from_db: get_table_data_from_db
+};
