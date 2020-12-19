@@ -42,12 +42,13 @@ countersScrapper.run();
 
 const globalWarmingService = new GlobalWarmingService(app)
 
-var cronJob = cron.schedule("*/10 * * * * *", () => {
-
-    globalWarmingService.run()   //commented out to prevent fetching data from API every 10sec
-    console.info('cron job completed');
-});
-cronJob.start();
+globalWarmingService.run()
+// var cronJob = cron.schedule("*/1000 * * * * *", () => {
+//
+//     globalWarmingService.run()
+//     console.info('cron job completed');
+// });
+// cronJob.start();
 
 
 // simple route

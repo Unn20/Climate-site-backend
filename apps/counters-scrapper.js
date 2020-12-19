@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const dataBaseConnector = require("../database/data-base-connector");
 
 // 1. tons of co2 into the atmosphere https://www.theworldcounts.com/challenges/climate-change/global-warming/global-co2-emissions/story
 // 2. tons of melted ice https://www.theworldcounts.com/challenges/climate-change/global-warming/the-melting-ice-caps/story
@@ -22,6 +23,7 @@ class CountersScrapper {
     constructor() {
 
     }
+
     run() {
         console.log("Scrapper getting counters data");
         this.aRun().then(() => { console.log("Scrapped")});
@@ -36,18 +38,17 @@ class CountersScrapper {
         for (const [key, url] of Object.entries(this.urls)) {
             await page.goto(url).catch((e) => {console.log(e);});
             await page.waitForNavigation({timeout:4000}).catch(() => {});
-            const value = await this.getCounterValue(page).catch((e) => {console.log(e);});
 
-            countersData[key] = value;
+            countersData[key] = await this.getCounterValue(page).catch((e) => {console.log(e);});
         }
 
         console.log(countersData);
 
-        this.fillDatabase(countersData);
+        this.handleDatabase(countersData);
     }
 
-    fillDatabase(scrapped) {
-        // TODO: Connect to database and insert found values
+    handleDatabase(scrapped) {
+        dataBaseConnector.save_data_from_counters(scrapped);
         console.log("Counters data inserted into database");
     }
 
