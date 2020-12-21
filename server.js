@@ -2,9 +2,9 @@ const express = require("express");
 /* Node Modules */
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const Joi = require('joi') // do walidacji danych
-// const mysql = require('mysql')
+const Joi = require('joi')
 const cron = require('node-cron')
+const winston = require('winston');
 
 /* Subfiles */
 const appCats = require("./api/cats")
@@ -14,6 +14,41 @@ const GlobalWarmingService = require("./apps/global-warming-service")
 const appCounters = require("./api/counters")
 const ClimateNasaGovScrapper = require("./apps/climate-nasa-gov-scrapper")
 const CountersScrapper = require("./apps/counters-scrapper")
+const databaseLoggerOptions = require("./database/data-base-logger-transport")
+
+/* Logger */
+const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        }),
+        winston.format.errors({ stack: true }),
+        winston.format.splat(),
+        winston.format.json()
+    ),
+    transports: [
+        new winston.transports.File({
+            filename: "error.log",
+            level: "error"
+        }),
+        new winston_mysql(databaseLoggerOption)
+    ],
+    exceptionHandlers: [
+        new winston.transports.File({ filename: 'exceptions.log' })
+    ],
+    rejectionHandlers: [
+        new winston.transports.File({ filename: 'rejections.log' })
+    ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(new transports.Console({
+        format: format.combine(
+            format.colorize(),
+            format.simple()
+        )
+    }));
+}
 
 
 const app = express();
@@ -59,5 +94,5 @@ app.get("/", (req, res) => {
 // set port, listen for requests
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Server started on port ${port}!`)
+    logger.info(`Server started on port ${port}!`)
 })

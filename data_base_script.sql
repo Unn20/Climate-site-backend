@@ -62,6 +62,15 @@ CREATE TABLE counters(
     counter5 INT
 );
 
+CREATE TABLE logs (
+    id INT NOT NULL AUTO_INCREMENT,
+    level VARCHAR(16) NOT NULL,
+    message VARCHAR(512) NOT NULL,
+    meta VARCHAR(1024) NOT NULL,
+    timestamp DATETIME NOT NULL,
+    CONSTRAINT Pk_logs PRIMARY KEY (id)
+ );
+
 -- temperatureFakeData
 --    { "time": "2019.21", "station": "1.45", "land": "1.18" }, 
 
