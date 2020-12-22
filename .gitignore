@@ -1,4 +1,8 @@
+# IGNORE
 .git
 /node_modules/
-/ssl
 .idea
+/ssl
+
+# ALLOW
+!/ssl/rds-ca-2019-eu-central-1.pem

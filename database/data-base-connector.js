@@ -23,10 +23,6 @@ function save_data_from_apis(resultJson, api_database_mapping){
         let values_list = data_list.map(Object.values);
         if (data_list.length == 0) continue  //PRINT ERROR? 
         let table_name = api_database_mapping[key]
-        // let sql = `INSERT INTO ${table_name} ('` + Object.keys(data_list[0]).join("','") + "') VALUES ?";
-        
-        // let truncate_sql = `TRUNCATE ${table_name}`
-
         let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
         // Get connection per query
         database_connection.getConnection(function(err, connection) {
