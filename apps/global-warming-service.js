@@ -62,8 +62,7 @@ class GlobalWarmingService {
         // console.log(resultJson)
         // Method to change key names in an object
         // resultJson.temperature = resultJson.temperature.map(({ time: year_day, ...rest }) => ({ year_day, ...rest }));
-        
-        // TODO: !!!! DATA VALIDATION
+
         dataBaseConnector.save_data_from_apis(resultJson, this.api_database_mapping);
     }
 
@@ -185,7 +184,7 @@ class GlobalWarmingService {
             console.log(err)
         })
 
-        Promise.all([promise1, promise2, promise3, promise4, promise5]).then((values) => {
+        Promise.all([promise1, promise2, promise3, promise4, promise5]).then(() => {
             this.handleDatabase(resultJson)
         })
     }
@@ -193,7 +192,7 @@ class GlobalWarmingService {
 
     getJSON(options, onResult) {
         // console.log('rest::getJSON');
-        const port = options.port == 443 ? https : http;
+        const port = options.port === 443 ? https : http;
 
         let output = '';
 
