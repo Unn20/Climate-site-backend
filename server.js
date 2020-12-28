@@ -93,19 +93,19 @@ const climateNasaGovScrapper = new ClimateNasaGovScrapper()
 climateNasaGovScrapper.run(); // One time run
 // Every minute, visit other websites with climate data
 
+
 const countersScrapper = new CountersScrapper()
 
-countersScrapper.run();
 
 const globalWarmingService = new GlobalWarmingService(app)
 
 globalWarmingService.run()
-// var cronJob = cron.schedule("*/1000 * * * * *", () => {
-//
-//     globalWarmingService.run()
-//     console.info('cron job completed');
-// });
-// cronJob.start();
+var cronJob = cron.schedule("01 * * * *", () => {
+    globalWarmingService.run()
+    countersScrapper.run();
+    console.info('cron job completed');
+});
+cronJob.start();
 
 
 // simple route
