@@ -21,6 +21,7 @@ New data appears every one year. Data is gathered since 1979
 const http = require('http');
 const https = require('https');
 const dataBaseConnector = require("../database/data-base-connector");
+const logger = require('../logger');
 
 
 class GlobalWarmingService {
@@ -94,7 +95,7 @@ class GlobalWarmingService {
             })
             resultJson.temperature = result
         }).catch(err => {
-            console.log(err)
+            console.error(err)
         })
 
         const promise2 = new Promise((resolve, reject) => {
