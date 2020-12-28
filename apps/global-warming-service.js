@@ -95,7 +95,7 @@ class GlobalWarmingService {
             })
             resultJson.temperature = result
         }).catch(err => {
-            console.error(err)
+            logger.error(err)
         })
 
         const promise2 = new Promise((resolve, reject) => {
@@ -114,7 +114,7 @@ class GlobalWarmingService {
             })
             resultJson.carbonDioxide = result
         }).catch(err => {
-            console.log(err)
+            logger.error(err)
         })
 
         const promise3 = new Promise((resolve, reject) => {
@@ -141,7 +141,7 @@ class GlobalWarmingService {
             })
             resultJson.methane = result
         }).catch(err => {
-            console.log(err)
+            logger.error(err)
         })
 
         const promise4 = new Promise((resolve, reject) => {
@@ -167,7 +167,7 @@ class GlobalWarmingService {
             })
             resultJson.nitrousOxide = result
         }).catch(err => {
-            console.log(err)
+            logger.error(err)
         })
 
         const promise5 = new Promise((resolve, reject) => {
@@ -182,23 +182,24 @@ class GlobalWarmingService {
         }).then((result) => {
             resultJson.arctic = result
         }).catch(err => {
-            console.log(err)
+            logger.error(err)
         })
 
         Promise.all([promise1, promise2, promise3, promise4, promise5]).then(() => {
+            logger.info("Whole global-warming data has been fetched properly.")
             this.handleDatabase(resultJson)
         })
     }
 
 
     getJSON(options, onResult) {
-        // console.log('rest::getJSON');
+        logger.debug('rest::getJSON');
         const port = options.port === 443 ? https : http;
 
         let output = '';
 
         const req = port.request(options, (res) => {
-            // console.log(`${options.host} : ${res.statusCode}`);
+            // logger.debug(`${options.host} : ${res.statusCode}`);
             res.setEncoding('utf8');
 
             res.on('data', (chunk) => {
@@ -210,7 +211,7 @@ class GlobalWarmingService {
             });
         });
         req.on('error', (err) => {
-            console.log(`Error: ${err.message}`)
+            logger.error(`Error while fetching JSON data: ${err.message}`)
         });
         req.end();
     };
