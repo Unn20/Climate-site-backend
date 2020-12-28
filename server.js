@@ -14,7 +14,8 @@ const GlobalWarmingService = require("./apps/global-warming-service")
 const appCounters = require("./api/counters")
 const ClimateNasaGovScrapper = require("./apps/climate-nasa-gov-scrapper")
 const CountersScrapper = require("./apps/counters-scrapper")
-const databaseLoggerOptions = require("./database/data-base-logger-transport")
+const databaseTransport = require("./database/data-base-logger-transport")
+const { SQLTransport } = require('./database/winston-sql-tranport')
 
 /* Logger */
 const logger = winston.createLogger({
@@ -31,7 +32,28 @@ const logger = winston.createLogger({
             filename: "error.log",
             level: "error"
         }),
-        new winston_mysql(databaseLoggerOption)
+        new SQLTransport({
+            client: 'mysql',
+            connection: {
+                host: 'backend-database.cwatox5ynlgb.eu-central-1.rds.amazonaws.com',
+                //   port: process.env.MYSQL_PORT,
+                user: 'admin',
+                password: '3edcvfr4',
+                database: 'CLIMATE_DATA'
+            },
+            name: 'MySQL',
+            pool: {
+                min: 0,
+                max: 10
+            },
+            tableName: 'logs'
+        })
+        // new databaseTransport({
+        //     host: 'backend-database.cwatox5ynlgb.eu-central-1.rds.amazonaws.com',
+        //     user: 'admin',
+        //     password: '3edcvfr4',
+        //     database: 'CLIMATE_DATA'
+        // })
     ],
     exceptionHandlers: [
         new winston.transports.File({ filename: 'exceptions.log' })
@@ -42,10 +64,10 @@ const logger = winston.createLogger({
 });
 
 if (process.env.NODE_ENV !== 'production') {
-    logger.add(new transports.Console({
-        format: format.combine(
-            format.colorize(),
-            format.simple()
+    logger.add(new winston.transports.Console({
+        format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.simple()
         )
     }));
 }
