@@ -29,7 +29,8 @@ const logger = winston.createLogger({
                 min: 0,
                 max: 10
             },
-            tableName: 'logs'
+            tableName: 'logs',
+            level: 'info'
         })
     ],
     exceptionHandlers: [
@@ -45,7 +46,8 @@ if (process.env.NODE_ENV !== 'production') {
         format: winston.format.combine(
             winston.format.colorize(),
             winston.format.simple()
-        )
+        ),
+        level: 'debug'
     }));
 }
 
