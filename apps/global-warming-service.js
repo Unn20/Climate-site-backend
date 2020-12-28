@@ -60,7 +60,7 @@ class GlobalWarmingService {
 
     // funkcja wywoływana przy każdym zaciągnięciu danych z API
     handleDatabase(resultJson) {
-        // console.log(resultJson)
+        // logger.debug(resultJson)
         // Method to change key names in an object
         // resultJson.temperature = resultJson.temperature.map(({ time: year_day, ...rest }) => ({ year_day, ...rest }));
 
