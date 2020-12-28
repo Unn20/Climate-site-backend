@@ -1,5 +1,5 @@
 const winston = require('winston');
-const { SQLTransport } = require('./database/winston-sql-tranport')
+const { SQLTransport } = require('./database/winston-sql-transport')
 
 /* Logger */
 const logger = winston.createLogger({
