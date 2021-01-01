@@ -21,6 +21,12 @@ function save_data_from_apis(resultJson, api_database_mapping){
     for (let key of Object.keys(resultJson)) {
         let data_list = resultJson[key]
         let values_list = data_list.map(Object.values);
+        for(let values of values_list){
+            for(let i = 0; i < values.length; i++){
+                values[i] = +values[i]
+            }
+        }
+        console.log(values_list)
         if (data_list.length == 0) continue  //PRINT ERROR? 
         let table_name = api_database_mapping[key]
         let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";

@@ -12,16 +12,16 @@ CREATE OR REPLACE USER 'backend'@'%' IDENTIFIED BY 'LKlni7G83g82NB37asaw' REQUIR
 GRANT DELETE, INSERT, SELECT ON CLIMATE_DATA.* TO 'backend'@'%' IDENTIFIED BY 'LKlni7G83g82NB37asaw';
 
 
-CREATE TABLE temperature(
-    year VARCHAR(10),
+CREATE OR REPLACE TABLE temperature(
+    year INT,
     month TINYINT,
     station DOUBLE,
     land DOUBLE,
     CONSTRAINT Pk_Temperature PRIMARY KEY (year, month)
 );
 
-CREATE TABLE carbon_dioxide(
-    year VARCHAR(10),
+CREATE OR REPLACE TABLE carbon_dioxide(
+    year INT,
     month TINYINT,
     day TINYINT,
     cycle DOUBLE,
@@ -30,9 +30,9 @@ CREATE TABLE carbon_dioxide(
 );
 
 
-CREATE TABLE methane(
-    year VARCHAR(10),
-    month VARCHAR(2),
+CREATE OR REPLACE TABLE methane(
+    year INT,
+    month TINYINT,
     average DOUBLE,
     trend DOUBLE,
     averageUnc DOUBLE,
@@ -41,9 +41,9 @@ CREATE TABLE methane(
 );
 
 
-CREATE TABLE nitrous_oxide(
-    year VARCHAR(10),
-    month VARCHAR(2),
+CREATE OR REPLACE TABLE nitrous_oxide(
+    year INT,
+    month TINYINT,
     average DOUBLE,
     trend DOUBLE,
     averageUnc DOUBLE,
@@ -52,8 +52,8 @@ CREATE TABLE nitrous_oxide(
 );
 
 
-CREATE TABLE arctic(
-    year VARCHAR(10),
+CREATE OR REPLACE TABLE arctic(
+    year INT,
     extent DOUBLE,
     area DOUBLE,
     CONSTRAINT Pk_Arctic PRIMARY KEY (year)
@@ -69,4 +69,13 @@ CREATE OR REPLACE TABLE counters(
     resources_extracted INT UNSIGNED,
     plastic_in_ocean INT UNSIGNED,
     CONSTRAINT Pk_Counters PRIMARY KEY (id)
+);
+
+CREATE OR REPLACE TABLE nasa_counters(
+    id TIMESTAMP default current_timestamp,
+    val DOUBLE,
+    name VARCHAR(25),
+    dir VARCHAR(4),
+    unit VARCHAR(80),
+    CONSTRAINT Pk_Nasa_Counters PRIMARY KEY (id, name)
 );
