@@ -8,8 +8,8 @@ console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-ce
 // var database_connection = mysql.createConnection({
 var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamknie polaczenie trzeba tworzyc nowe nie mozna kilku queries na raz itp
     host: 'backend-database.cwatox5ynlgb.eu-central-1.rds.amazonaws.com',
-    user: 'admin',
-    password: '3edcvfr4', // FIXME: UKRYWANIE HASEL!
+    user: 'backend',
+    password: 'LKlni7G83g82NB37asaw', // FIXME: UKRYWANIE HASEL!
     database: 'CLIMATE_DATA',
     ssl: {
         ca: fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-root.pem'))
