@@ -1,5 +1,6 @@
 const urllib = require('urllib');
 const cheerio = require('cheerio');
+const dataBaseConnector = require("../database/data-base-connector");
 
 class ClimateNasaGovScrapper {
     url = 'https://climate.nasa.gov/';
@@ -8,8 +9,7 @@ class ClimateNasaGovScrapper {
     }
 
     fill_database(scrapped) {
-        // TODO: Connect to database and insert found values
-        return scrapped;
+        dataBaseConnector.save_data_from_nasa_counters(scrapped);
     }
 
     run() {
