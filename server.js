@@ -20,7 +20,7 @@ const CountersScrapper = require("./apps/counters-scrapper")
 const app = express();
 
 const corsOptions = {
-    origin: 'http://localhost:4200',
+    origin: ['http://localhost:4200', '52.219.72.224', 'http://climate-site.s3-website.eu-central-1.amazonaws.com'],
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
