@@ -2,9 +2,9 @@ const express = require("express");
 /* Node Modules */
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const Joi = require('joi') // do walidacji danych
-// const mysql = require('mysql')
+const Joi = require('joi')
 const cron = require('node-cron')
+const logger = require('./logger')
 
 /* Subfiles */
 const appCats = require("./api/cats")
@@ -38,19 +38,19 @@ const climateNasaGovScrapper = new ClimateNasaGovScrapper()
 climateNasaGovScrapper.run(); // One time run
 // Every minute, visit other websites with climate data
 
-
 const countersScrapper = new CountersScrapper()
 
+countersScrapper.run();
 
 const globalWarmingService = new GlobalWarmingService(app)
 
 globalWarmingService.run()
-var cronJob = cron.schedule("01 * * * *", () => {
-    globalWarmingService.run()
-    countersScrapper.run();
-    console.info('cron job completed');
-});
-cronJob.start();
+// var cronJob = cron.schedule("*/1000 * * * * *", () => {
+//
+//     globalWarmingService.run()
+//     console.info('cron job completed');
+// });
+// cronJob.start();
 
 
 // simple route
@@ -61,5 +61,5 @@ app.get("/", (req, res) => {
 // set port, listen for requests
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Server started on port ${port}!`)
+    logger.info(`Server started on port ${port}!`)
 })
