@@ -12,6 +12,7 @@ const appClimateData = require("./api/climate-data")
 
 const GlobalWarmingService = require("./apps/global-warming-service")
 const appCounters = require("./api/counters")
+const appNasaCounters = require("./api/nasa-counters")
 const ClimateNasaGovScrapper = require("./apps/climate-nasa-gov-scrapper")
 const CountersScrapper = require("./apps/counters-scrapper")
 
@@ -28,6 +29,7 @@ app.use(bodyParser.json())
 app.use("/api/cats", appCats)
 app.use("/api/climate-data", appClimateData)
 app.use("/api/counters", appCounters)
+app.use("/api/nasa-counters", appNasaCounters)
 
 
 // Every 10 seconds, visit other websites with climate data
