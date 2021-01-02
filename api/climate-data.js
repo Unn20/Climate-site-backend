@@ -1,6 +1,7 @@
 const express = require("express");
 const dataBaseConnector = require("../database/data-base-connector");
 const appClimateData = express();
+const logger = require('../logger');
 
 
 appClimateData.route('/').get((req, res) => {
@@ -8,28 +9,28 @@ appClimateData.route('/').get((req, res) => {
 })
 
 
-async function getTemperatureData(){
+async function getTemperatureData() {
     const temperature_data = await dataBaseConnector.get_table_data_from_db('SELECT * FROM temperature');
     return temperature_data;
 };
 
 
-async function getCarbonDioxideData(){
+async function getCarbonDioxideData() {
     const carbon_dioxide_data = await dataBaseConnector.get_table_data_from_db('SELECT * FROM carbon_dioxide');
     return carbon_dioxide_data;
 };
 
-async function getMethaneData(){
+async function getMethaneData() {
     const methane_data = await dataBaseConnector.get_table_data_from_db('SELECT * FROM methane');
     return methane_data;
 };
 
-async function getNitrousOxideData(){
+async function getNitrousOxideData() {
     const nitrous_data = await dataBaseConnector.get_table_data_from_db('SELECT * FROM nitrous_oxide');
     return nitrous_data;
 };
 
-async function getArcticData(){
+async function getArcticData() {
     const arctic_data = await dataBaseConnector.get_table_data_from_db('SELECT * FROM arctic');
     return arctic_data;
 };
@@ -37,26 +38,31 @@ async function getArcticData(){
 
 appClimateData.route('/temperature').get(async (req, res) => {
     let temperature_data = await getTemperatureData()
+    logger.info(`${req.baseUrl} has been fetched from ${req.hostname}:${req.ip}`)
     res.send(temperature_data);
 })
 
 appClimateData.route('/co2').get(async (req, res) => {
     let carbon_dioxide_data = await getCarbonDioxideData()
+    logger.info(`${req.baseUrl} has been fetched from ${req.hostname}:${req.ip}`)
     res.send(carbon_dioxide_data)
 })
 
 appClimateData.route('/methane').get(async (req, res) => {
     let methane_data = await getMethaneData()
+    logger.info(`${req.baseUrl} has been fetched from ${req.hostname}:${req.ip}`)
     res.send(methane_data)
 })
 
 appClimateData.route('/nitrous-oxide').get(async (req, res) => {
     let nitrous_oxide_data = await getNitrousOxideData()
+    logger.info(`${req.baseUrl} has been fetched from ${req.hostname}:${req.ip}`)
     res.send(nitrous_oxide_data)
 })
 
 appClimateData.route('/arctic').get(async (req, res) => {
     let arctic_data = await getArcticData()
+    logger.info(`${req.baseUrl} has been fetched from ${req.hostname}:${req.ip}`)
     res.send(arctic_data)
 })
 

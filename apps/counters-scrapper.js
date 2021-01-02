@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const dataBaseConnector = require("../database/data-base-connector");
+const logger = require('../logger');
 
 // 1. tons of co2 into the atmosphere https://www.theworldcounts.com/challenges/climate-change/global-warming/global-co2-emissions/story
 // 2. tons of melted ice https://www.theworldcounts.com/challenges/climate-change/global-warming/the-melting-ice-caps/story
@@ -25,41 +26,43 @@ class CountersScrapper {
     }
 
     run() {
-        console.log("Scrapper getting counters data");
-        this.aRun().then(() => { console.log("Scrapped")});
+        logger.info("Scrapper getting counters data");
+        this.aRun().then(() => { logger.debug("Scrapped") });
     }
 
     async aRun() {
-        const countersData = {co2: 0, meltedIce: 0, terajoulesUsed: 0, wasteDumped: 0,
-            resourcesExtracted: 0, plasticInOcean: 0};
-        const browser = await puppeteer.launch().catch((e) => {console.log(e);});
-        const page = await browser.newPage().catch((e) => {console.log(e);});
+        const countersData = {
+            co2: 0, meltedIce: 0, terajoulesUsed: 0, wasteDumped: 0,
+            resourcesExtracted: 0, plasticInOcean: 0
+        };
+        const browser = await puppeteer.launch().catch((e) => { logger.error(e); });
+        const page = await browser.newPage().catch((e) => { logger.error(e); });
 
         for (const [key, url] of Object.entries(this.urls)) {
-            await page.goto(url).catch((e) => {console.log(e);});
-            await page.waitForNavigation({timeout:4000}).catch(() => {});
+            await page.goto(url).catch((e) => { logger.error(e); });
+            await page.waitForNavigation({ timeout: 4000 }).catch(() => { });
 
-            countersData[key] = await this.getCounterValue(page).catch((e) => {console.log(e);});
+            countersData[key] = await this.getCounterValue(page).catch((e) => { logger.error(e); });
         }
 
-        console.log(countersData);
+        logger.debug(countersData);
 
         this.handleDatabase(countersData);
     }
 
     handleDatabase(scrapped) {
         dataBaseConnector.save_data_from_counters(scrapped);
-        console.log("Counters data inserted into database");
+        logger.info("Counters data inserted into database");
     }
 
     async getCounterValue(page) {
         // select button to filter data by today only
-        const button = await page.$('section.hero div.column div button:last-child').catch((e) => {console.log(e);});
-        await button.evaluate( button => button.click() ).catch((e) => {console.log(e);});
+        const button = await page.$('section.hero div.column div button:last-child').catch((e) => { logger.error(e); });
+        await button.evaluate(button => button.click()).catch((e) => { logger.error(e); });
 
         // select counter and get text inside its div
-        const counter = await page.$('section.hero div.counter').catch((e) => {console.log(e);});
-        const value = await counter.evaluate(counter => counter.textContent, counter).catch((e) => {console.log(e);});
+        const counter = await page.$('section.hero div.counter').catch((e) => { logger.error(e); });
+        const value = await counter.evaluate(counter => counter.textContent, counter).catch((e) => { logger.error(e); });
 
         // Remove commas from data
         let valueText = value.toString();
