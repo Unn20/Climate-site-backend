@@ -6,6 +6,7 @@ USE CLIMATE_DATA;
 -- ec2-3-135-244-176.us-east-2.compute.amazonaws.com -> backend's ip
 -- CREATE OR REPLACE USER 'backend'@'ec2-3-135-244-176.us-east-2.compute.amazonaws.com' IDENTIFIED BY 'LKlni7G83g82NB37asaw' REQUIRE SSL;
 -- GRANT DELETE, INSERT, SELECT ON CLIMATE_DATA.* TO 'backend'@'ec2-3-135-244-176.us-east-2.compute.amazonaws.com' IDENTIFIED BY 'LKlni7G83g82NB37asaw';
+-- 'backend'@'%' podac zamiast % ip backendu w fin wersji?
 
 -- JAK Z WIDOCZNOŚCIĄ HASEŁ?
 CREATE OR REPLACE USER 'backend'@'%' IDENTIFIED BY 'LKlni7G83g82NB37asaw' REQUIRE SSL;
@@ -70,6 +71,7 @@ CREATE OR REPLACE TABLE counters(
     plastic_in_ocean INT UNSIGNED,
     CONSTRAINT Pk_Counters PRIMARY KEY (id)
 );
+
 
 CREATE OR REPLACE TABLE nasa_counters(
     id TIMESTAMP default current_timestamp,

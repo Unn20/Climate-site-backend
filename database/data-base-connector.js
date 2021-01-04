@@ -1,18 +1,21 @@
 const mysql = require('mysql')
 const fs = require('fs');
+const path = require('path');
 
+console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString())
 
 /* Ponizej example z użycia bazy danych */
 // var database_connection = mysql.createConnection({
 var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamknie polaczenie trzeba tworzyc nowe nie mozna kilku queries na raz itp
     host: 'backend-database.cwatox5ynlgb.eu-central-1.rds.amazonaws.com',
-    user: 'admin',
-    password: '3edcvfr4', // FIXME: UKRYWANIE HASEL!
+    user: 'backend',
+    password: 'LKlni7G83g82NB37asaw', // FIXME: UKRYWANIE HASEL!
     database: 'CLIMATE_DATA',
-    // ssl: {
-    //     ca: fs.readFileSync(__dirname + '/ssl/rds-ca-2019-eu-central-1.pem')
-    // } //FIXME:
+    ssl: {
+        ca: fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-root.pem'))
+    }
 })
+
 
 function save_data_from_apis(resultJson, api_database_mapping){
     for (let key of Object.keys(resultJson)) {
@@ -35,9 +38,6 @@ function save_data_from_apis(resultJson, api_database_mapping){
         if (skip_record) continue;
         if (data_list.length === 0) continue  //PRINT ERROR?
         let table_name = api_database_mapping[key]
-        // let sql = `INSERT INTO ${table_name} ('` + Object.keys(data_list[0]).join("','") + "') VALUES ?";
-
-        // let truncate_sql = `TRUNCATE ${table_name}`
 
         let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
         // Get connection per query
@@ -172,4 +172,5 @@ module.exports = {
     save_data_from_counters: save_data_from_counters,
     save_data_from_nasa_counters: save_data_from_nasa_counters,
     get_table_data_from_db: get_table_data_from_db
-}
+};
+
