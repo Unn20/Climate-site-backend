@@ -1,5 +1,7 @@
 const urllib = require('urllib');
 const cheerio = require('cheerio');
+const logger = require('../logger');
+const dataBaseConnector = require("../database/data-base-connector");
 
 class ClimateNasaGovScrapper {
     url = 'https://climate.nasa.gov/';
@@ -8,7 +10,7 @@ class ClimateNasaGovScrapper {
     }
 
     fill_database(scrapped) {
-        // TODO: Connect to database and insert found values
+        dataBaseConnector.save_data_from_nasa_counters(scrapped);
     }
 
     run() {
@@ -18,19 +20,19 @@ class ClimateNasaGovScrapper {
                     throw err;
                 }
             } catch (error) {
-                console.log(error);
+                logger.error(error);
             }
 
             if (res.statusCode === 200) {
                 this.scrap(data);
             } else {
-                console.log("Request failed: " + res.statusCode.toString() + "\n" + res.statusMessage);
+                logger.error("Request failed: " + res.statusCode.toString() + "\n" + res.statusMessage);
             }
         });
     }
 
     scrap(html) {
-        console.log('Scrapper doing his thing');
+        logger.info('Scrapper doing his thing');
 
         const $ = cheerio.load(html.toString());
 
@@ -90,10 +92,10 @@ class ClimateNasaGovScrapper {
         // Zip scrapped data together
         const scrapped = [];
         for (let i = 0; i < titleList.length; i++) {
-            scrapped.push([titleList[i], directionList[i], valueList[i], unitList[i]]);
+            scrapped.push({name:titleList[i], dir:directionList[i], val:parseFloat(valueList[i]), unit:unitList[i]});
         }
 
-        console.log(scrapped);
+        logger.debug(scrapped);
         this.fill_database(scrapped);
     }
 }

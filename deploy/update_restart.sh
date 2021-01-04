@@ -2,7 +2,6 @@
 
 set -e
 
-
 pm2 stop backend 2 > /dev/null || true
 
 cd /home/ubuntu/backend/
@@ -14,4 +13,4 @@ PATH=/home/ubuntu/node/bin:$PATH
 
 npm install
 
-(pm2 restart backend) || ( (pm2 delete backend 2 > /dev/null) && (pm2 start server.js --name backend --watch) )
+(pm2 restart backend --watch) || ( (pm2 delete backend 2 > /dev/null) && (pm2 start server.js --name backend --watch) )
