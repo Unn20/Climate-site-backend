@@ -79,12 +79,3 @@ CREATE OR REPLACE TABLE nasa_counters(
     unit VARCHAR(80),
     CONSTRAINT Pk_Nasa_Counters PRIMARY KEY (id, name)
 );
-
-CREATE OR REPLACE TABLE nasa_counters(
-    id TIMESTAMP default current_timestamp,
-    val DOUBLE,
-    name VARCHAR(25),
-    dir VARCHAR(4),
-    unit VARCHAR(80),
-    CONSTRAINT Pk_Nasa_Counters PRIMARY KEY (id, name)
-);
