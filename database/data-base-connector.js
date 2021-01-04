@@ -1,6 +1,7 @@
 const mysql = require('mysql')
 const fs = require('fs');
 const path = require('path');
+const Joi = require('joi');
 
 console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString())
 
@@ -18,25 +19,69 @@ var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamkni
 
 
 function save_data_from_apis(resultJson, api_database_mapping){
+    api_validation_mapping = {
+        temperature: Joi.object({
+            year: Joi.INT.require,
+            month: Joi.INT.require,
+            station: Joi.DOUBLE.require,
+            land: Joi.DOUBLE.require}),
+        carbonDioxide: Joi.object({
+            year: Joi.INT.require,
+            month: Joi.INT.require,
+            day: Joi.INT.require,
+            cycle: Joi.DOUBLE.require,
+            trend: Joi.DOUBLE.require}),
+        methane: Joi.object({
+            year: Joi.INT.require,
+            month: Joi.INT.require,
+            average: Joi.DOUBLE.require,
+            trend: Joi.DOUBLE.require,
+            averageUnc: Joi.DOUBLE.require,
+            trendUnc: Joi.DOUBLE.require}),
+        nitrousOxide: Joi.object({
+            year: Joi.INT.require,
+            month: Joi.INT.require,
+            average: Joi.DOUBLE.require,
+            trend: Joi.DOUBLE.require,
+            averageUnc: Joi.DOUBLE.require,
+            trendUnc: Joi.DOUBLE.require}),
+        arctic: Joi.object({
+            year: Joi.INT.require,
+            extent: Joi.DOUBLE.require,
+            area: Joi.DOUBLE.require})
+    }
+
     for (let key of Object.keys(resultJson)) {
         let data_list = resultJson[key]
+        if (data_list.length === 0) continue  //PRINT ERROR?
         let values_list = data_list.map(Object.values);
-        let skip_record = false;
-        for (let val of values_list) {
+        let values_validator = api_validation_mapping[key]
+        for (var i = values_list.length - 1; i >= 0; i--) {
             try {
-                parseInt(val);
-            } catch (e) {
-                try {
-                    parseFloat(val);
-                } catch (e) {
-                    console.log(e);
-                    skip_record = true;
-                    break;
-                }
+                const value = await values_validator.validateAsync(values_list[i]);
+            }
+            catch (err) {
+                console.log(`Splicing for ${key} -> ${values_list[i]}`)
+                values_list.splice(i, 1);
             }
         }
-        if (skip_record) continue;
-        if (data_list.length === 0) continue  //PRINT ERROR?
+
+        // let skip_record = false;
+        // for (let val of values_list) {
+        //     try {
+        //         parseInt(val);
+        //     } catch (e) {
+        //         try {
+        //             parseFloat(val);
+        //         } catch (e) {
+        //             console.log(e);
+        //             skip_record = true;
+        //             break;
+        //         }
+        //     }
+        // }
+        // if (skip_record) continue;
+ 
         let table_name = api_database_mapping[key]
 
         let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
