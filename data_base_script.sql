@@ -79,3 +79,12 @@ CREATE OR REPLACE TABLE nasa_counters(
     unit VARCHAR(80),
     CONSTRAINT Pk_Nasa_Counters PRIMARY KEY (id, name)
 );
+
+CREATE or REPLACE TABLE logs (
+    id INT NOT NULL AUTO_INCREMENT,
+    level VARCHAR(16) NOT NULL,
+    message VARCHAR(512) NOT NULL,
+    timestamp DATETIME NOT NULL,
+    CONSTRAINT Pk_logs PRIMARY KEY (id)
+ );
+
