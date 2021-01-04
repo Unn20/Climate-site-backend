@@ -2,7 +2,14 @@
 CREATE OR REPLACE DATABASE CLIMATE_DATA;
 USE CLIMATE_DATA;
 
---TOOD: obczaj DANE W STRINGACH ALE ARCTIC WE DOUBLEACH??
+-- OFFICIAL VERSION 
+-- ec2-3-135-244-176.us-east-2.compute.amazonaws.com -> backend's ip
+-- CREATE OR REPLACE USER 'backend'@'ec2-3-135-244-176.us-east-2.compute.amazonaws.com' IDENTIFIED BY 'LKlni7G83g82NB37asaw' REQUIRE SSL;
+-- GRANT DELETE, INSERT, SELECT ON CLIMATE_DATA.* TO 'backend'@'ec2-3-135-244-176.us-east-2.compute.amazonaws.com' IDENTIFIED BY 'LKlni7G83g82NB37asaw';
+
+-- JAK Z WIDOCZNOŚCIĄ HASEŁ?
+CREATE OR REPLACE USER 'backend'@'%' IDENTIFIED BY 'LKlni7G83g82NB37asaw' REQUIRE SSL;
+GRANT DELETE, INSERT, SELECT ON CLIMATE_DATA.* TO 'backend'@'%' IDENTIFIED BY 'LKlni7G83g82NB37asaw';
 
 
 CREATE TABLE temperature(
@@ -53,16 +60,27 @@ CREATE TABLE arctic(
 );
 
 
-CREATE TABLE counters(
-    counter0 INT,
-    counter1 INT,
-    counter2 INT,
-    counter3 INT,
-    counter4 INT,
-    counter5 INT
+CREATE OR REPLACE TABLE counters(
+    id TIMESTAMP default current_timestamp,
+    carbon_dioxide INT UNSIGNED,
+    melted_ice INT UNSIGNED,
+    tera_joules_used INT UNSIGNED,
+    waste_dumped INT UNSIGNED,
+    resources_extracted INT UNSIGNED,
+    plastic_in_ocean INT UNSIGNED,
+    CONSTRAINT Pk_Counters PRIMARY KEY (id)
 );
 
-CREATE TABLE logs (
+CREATE OR REPLACE TABLE nasa_counters(
+    id TIMESTAMP default current_timestamp,
+    val DOUBLE,
+    name VARCHAR(25),
+    dir VARCHAR(4),
+    unit VARCHAR(80),
+    CONSTRAINT Pk_Nasa_Counters PRIMARY KEY (id, name)
+);
+
+CREATE or REPLACE TABLE logs (
     id INT NOT NULL AUTO_INCREMENT,
     level VARCHAR(16) NOT NULL,
     message VARCHAR(512) NOT NULL,
@@ -70,25 +88,3 @@ CREATE TABLE logs (
     CONSTRAINT Pk_logs PRIMARY KEY (id)
  );
 
--- temperatureFakeData
---    { "time": "2019.21", "station": "1.45", "land": "1.18" }, 
-
--- co2FakeData = {
---     "co2": [
---         { "year": "2020", "month": "10", "day": "31", "cycle": "412.73", "trend": "413.39" },
-     
--- methaneFakeData = {
---     "methane": [
---         { "date": "2018.11", "average": "1866.2", "trend": "1860.8", "averageUnc": "1.1", "trendUnc": "0.8" },
-      
-
--- nitrousOxideFakeData = {
---     "nitrous": [
---         { "date": "2018.11", "average": "331.5", "trend": "331.3", "averageUnc": "0.2", "trendUnc": "0.2" },
-     
-
--- arcticFakeData = {
---     "result": [
---         { "year": "1979", "extent": 7.05, "area": 4.58 }, { "year": "1980", "extent": 7.67, "area": 4.87 },
-       
-       
