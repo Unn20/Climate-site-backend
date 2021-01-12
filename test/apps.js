@@ -1,18 +1,43 @@
-var expect = require('chai').expect;
+const { describe, it } = require('mocha');
+const { expect } = require('chai');
 
-describe('Apps', () => {
+const GlobalWarmingService = require("../apps/global-warming-service")
+const ClimateNasaGovScrapper = require("../apps/climate-nasa-gov-scrapper")
+const CountersScrapper = require("../apps/counters-scrapper")
 
-    // add a test hook
+
+describe('apps/climate-nasa-gov-scrapper', () => {
+    let climateNasaGovScrapper;
     beforeEach(() => {
-        // ...some logic before each test is run
+        climateNasaGovScrapper = new ClimateNasaGovScrapper();
+    })
+    it('Should have valid url', () => {
+        const url = climateNasaGovScrapper.url;
+        expect(url).to.match(/.+\..+/);
+    })
+});
+
+describe('apps/counters-scrapper App', () => {
+    let countersScrapper;
+    before(() => {
+        countersScrapper = new CountersScrapper();
     })
 
-    // test a functionality
-    it('shoudl ', () => {
-        // add an assertion
-        expect(2 + 2).to.equal(4);
+    it('Should have valid urls', () => {
+        for (let url in countersScrapper.urls) {
+            expect(countersScrapper.urls[url]).to.match(/.+\..+/);
+        }
+    })
+});
+
+describe('apps/global-warming-service App', () => {
+    let globalWarmingService;
+    before(() => {
+        globalWarmingService = new GlobalWarmingService(null)
     })
 
-    // ...some more tests
-
-})
+    it('Should have valid url', () => {
+        const url = globalWarmingService.metadata.url;
+        expect(url).to.match(/.+\..+/);
+    })
+});
