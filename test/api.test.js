@@ -9,7 +9,7 @@ const appNasaCounters = require("../api/nasa-counters")
 
 chai.use(chaiHttp);
 
-describe('climate-data API', () => {
+describe('api/climate-data', () => {
     it('GET /temperature', (done) => {
         chai.request(appClimateData).get('/temperature').end((err, res) => {
             if (err) {
@@ -66,7 +66,7 @@ describe('climate-data API', () => {
     });
 }).timeout(5000);
 
-describe("counters API", () => {
+describe("api/counters API", () => {
     it('GET /', (done) => {
         chai.request(appCounters).get('/').end((err, res) => {
             if (err) {
@@ -79,7 +79,7 @@ describe("counters API", () => {
     });
 }).timeout(2000);
 
-describe("nasa-counters API", () => {
+describe("api/nasa-counters API", () => {
     it('GET /', (done) => {
         chai.request(appNasaCounters).get('/').end((err, res) => {
             if (err) {
