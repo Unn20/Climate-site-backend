@@ -2,6 +2,7 @@ const mysql = require('mysql')
 const fs = require('fs');
 const path = require('path');
 const Joi = require('joi');
+const { join } = require('path');
 
 console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString())
 
@@ -17,45 +18,100 @@ var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamkni
     }
 })
 
-
+// TODO: MAX YEAR POBIERZ OBECNY ?
 function save_data_from_apis(resultJson, api_database_mapping){
-    api_validation_mapping = {
+    api_validation_schema_mapping = {
         temperature: Joi.object({
-            year: Joi.INT.require,
-            month: Joi.INT.require,
-            station: Joi.DOUBLE.require,
-            land: Joi.DOUBLE.require}),
+            year: Joi.number()
+                    .number()
+                    .integer()
+                    .greater(1800)
+                    .required(),
+            month: Joi.number()
+                    .number()
+                    .integer()
+                    .min(1)
+                    .max(12)
+                    .required(),
+            station: Joi.number()
+                    .required(),
+            land: Joi.number()
+                    .required()
+        }),
         carbonDioxide: Joi.object({
-            year: Joi.INT.require,
-            month: Joi.INT.require,
-            day: Joi.INT.require,
-            cycle: Joi.DOUBLE.require,
-            trend: Joi.DOUBLE.require}),
+            year: Joi.number()
+                    .integer()
+                    .greater(1800)
+					.required(),
+            month: Joi.number()
+                    .integer()
+                    .min(1)
+                    .max(12)
+					.required(),
+            day: Joi.number()
+                    .integer()
+                    .min(1)
+                    .max(31)
+                    .required(),
+            cycle: Joi.number()
+					.required(),
+            trend: Joi.number()
+                    .required()
+        }),
         methane: Joi.object({
-            year: Joi.INT.require,
-            month: Joi.INT.require,
-            average: Joi.DOUBLE.require,
-            trend: Joi.DOUBLE.require,
-            averageUnc: Joi.DOUBLE.require,
-            trendUnc: Joi.DOUBLE.require}),
+            year: Joi.number()
+					.integer()
+					.required(),
+            month: Joi.number()
+                    .integer()
+                    .min(1)
+                    .max(12)
+					.required(),
+            average: Joi.number()
+					.required(),
+            trend: Joi.number()
+					.required(),
+            averageUnc: Joi.number()
+					.required(),
+            trendUnc: Joi.number()
+                    .required()
+        }),
         nitrousOxide: Joi.object({
-            year: Joi.INT.require,
-            month: Joi.INT.require,
-            average: Joi.DOUBLE.require,
-            trend: Joi.DOUBLE.require,
-            averageUnc: Joi.DOUBLE.require,
-            trendUnc: Joi.DOUBLE.require}),
+            year: Joi.number()
+                    .integer()
+                    .greater(1800)
+					.required(),
+            month: Joi.number()
+                    .integer()
+                    .min(1)
+                    .max(12)
+					.required(),
+            average: Joi.number()
+					.required(),
+            trend: Joi.number()
+					.required(),
+            averageUnc: Joi.number()
+					.required(),
+            trendUnc: Joi.number()
+                    .required()
+        }),
         arctic: Joi.object({
-            year: Joi.INT.require,
-            extent: Joi.DOUBLE.require,
-            area: Joi.DOUBLE.require})
+            year: Joi.number()
+                    .integer()
+                    .greater(1800)
+					.required(),
+            extent: Joi.number()
+					.required(),
+            area: Joi.number()
+                    .required()
+        })
     }
 
     for (let key of Object.keys(resultJson)) {
         let data_list = resultJson[key]
         if (data_list.length === 0) continue  //PRINT ERROR?
-        let values_list = data_list.map(Object.values);
-        let values_validator = api_validation_mapping[key]
+        // let values_list = data_list.map(Object.values());  // FIXME
+        let values_validator = api_validation_schema_mapping[key]
         for (var i = values_list.length - 1; i >= 0; i--) {
             try {
                 const value = await values_validator.validateAsync(values_list[i]);
@@ -65,22 +121,6 @@ function save_data_from_apis(resultJson, api_database_mapping){
                 values_list.splice(i, 1);
             }
         }
-
-        // let skip_record = false;
-        // for (let val of values_list) {
-        //     try {
-        //         parseInt(val);
-        //     } catch (e) {
-        //         try {
-        //             parseFloat(val);
-        //         } catch (e) {
-        //             console.log(e);
-        //             skip_record = true;
-        //             break;
-        //         }
-        //     }
-        // }
-        // if (skip_record) continue;
  
         let table_name = api_database_mapping[key]
 
@@ -102,8 +142,6 @@ function save_data_from_apis(resultJson, api_database_mapping){
 }
 
 async function get_table_data_from_db(query, stringify=true){
-    // table_name = 'temperature'
-    // let sql = `SELECT * FROM ${table_name}`;
 
     return new Promise((resolve, reject) => {
         database_connection.getConnection(async (err, connection) => {
@@ -128,21 +166,56 @@ function save_data_from_counters(resultJson) {
     const table_name = 'counters';
     const keys_order = ['co2', 'meltedIce', 'terajoulesUsed', 'wasteDumped', 'resourcesExtracted', 'plasticInOcean'];
     const column_order = ['carbon_dioxide', 'melted_ice', 'tera_joules_used', 'waste_dumped', 'resources_extracted', 'plastic_in_ocean'];
-    const values_list = [];
-    let skipRecord = false;
-
-    for (let key of keys_order) {
-        const value = resultJson[key];
-        try {
-            parseFloat(value)
-        } catch (e) {
-            console.log(e);
-            skipRecord = true;
+    const key_mapping = Object.assign(...keys_order.map((k, i) => ({[k]: column_order[i]})))
+    let remappedResultJson = {}
+    for (var key in resultJson) {
+        if (resultJson.hasOwnProperty(key)) {
+            remappedResultJson[key_mapping[key]] = resultJson[key];
         }
-        values_list.push(value);
     }
-    if (skipRecord) return;
 
+    counters_validation_schema = Joi.object({
+        carbon_dioxide: Joi.number()
+                        .integer()
+                        .positive()
+                        .required(),
+        melted_ice: Joi.number()
+                        .integer()
+                        .positive()
+                        .required(),
+        tera_joules_used: Joi.number()
+                        .integer()
+                        .positive()
+                        .required(),
+        waste_dumped: Joi.number()
+                        .integer()
+                        .positive()
+                        .required(),
+        resources_extracted: Joi.number()
+                        .integer()
+                        .positive()
+                        .required(),
+        plastic_in_ocean: Joi.number()
+                        .integer()
+                        .positive()
+                        .required()
+    })
+
+    try {
+        const value = await counters_validation_schema.validateAsync(counter_value_by_key);
+    }
+    catch (err) {
+        console.log(`Counters data validation error. ${err}`);
+        skipRecord = true;
+    }
+    if (skipRecord) return; 
+
+    let values_list = []
+    for(let key of column_order){
+        values_list.push(counter_value_by_key[key])
+    }
+
+    // TODO: JESLI WARTOSC NIE DZIALA TO WYWAL Z TABELKI?
     let sql = `INSERT IGNORE INTO ${table_name} (` + column_order.join(", ") + ") VALUES (?)";
 
     // Get connection per query
@@ -168,6 +241,29 @@ async function save_data_from_nasa_counters(resultJson) {
     const all_values = [];
     let values_list = [];
 
+    const data_validation_schema = Joi.Object({
+        val: Joi.number()
+                .positive()
+                .required(),
+        name: Joi.string()
+                .pattern(new RegExp('^\w+$'))
+                .required(),
+        dir = Joi.string()
+                .pattern(new RegExp('^(up?)|(d(own)?)$', 'i')) //ignore case
+                .required(),
+        unit = Joi.string()
+                .required(),
+    })
+
+    try {
+        const value = await data_validation_schema.validateAsync(resultJson);
+    }
+    catch (err) {
+        console.log(`Nasa counters data validation error. ${err}`)
+        skipRecord = true;
+    }
+    if (skipRecord) return; 
+
     for (let rec of resultJson) {
         for (let key of keys_order) {
             const value = rec[key];
@@ -190,7 +286,7 @@ async function save_data_from_nasa_counters(resultJson) {
     }
 
     if (same_counter === 5) {
-        console.log("All records are duplicated");
+        console.log("All nasa records are duplicated. SQL insertion stopped.");
         return;
     }
 
