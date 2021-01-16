@@ -106,29 +106,30 @@ function save_data_from_apis(resultJson, api_database_mapping){
         })
     }
 
-    console.log(resultJson)
-    
 
     for (let key of Object.keys(resultJson)) {
         let data_list = resultJson[key]
-        console.log(data_list)
         if (data_list.length === 0) continue  //PRINT ERROR?
         let values_validator = api_validation_schema_mapping[key]
         for (var i = data_list.length - 1; i >= 0; i--) {
             try {
-                const value = values_validator.validate(data_list[i]);
+                const result = values_validator.validate(data_list[i]);
+                if (result.error) {
+                    throw new Error(result.error.details[0].message);
+                }
             }
             catch (err) {
-                logger.error(`Splicing for ${key} -> ${data_list[i]}`)
+                logger.error(`Validation error, splicing for ${key} -> ${data_list[i]}`)
                 data_list.splice(i, 1);
             }
         }
  
+        table_keys = Object.keys(data_list[0]);
         data_list = data_list.map(Object.values);
         
         let table_name = api_database_mapping[key]
 
-        let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
+        let sql = `INSERT IGNORE INTO ${table_name} (` + table_keys.join(", ") + ") VALUES ?";
         // Get connection per query
         database_connection.getConnection(function(err, connection) {
             if(err) { 
@@ -171,6 +172,7 @@ function save_data_from_counters(resultJson) {
     const keys_order = ['co2', 'meltedIce', 'terajoulesUsed', 'wasteDumped', 'resourcesExtracted', 'plasticInOcean'];
     const column_order = ['carbon_dioxide', 'melted_ice', 'tera_joules_used', 'waste_dumped', 'resources_extracted', 'plastic_in_ocean'];
     const key_mapping = Object.assign(...keys_order.map((k, i) => ({[k]: column_order[i]})))
+
     let remappedResultJson = {}
     for (var key in resultJson) {
         if (resultJson.hasOwnProperty(key)) {
@@ -205,8 +207,13 @@ function save_data_from_counters(resultJson) {
                         .required()
     })
 
+  
+    let skipRecord = false;
     try {
-        const value = counters_validation_schema.validate(counter_value_by_key);
+        const result = counters_validation_schema.validate(remappedResultJson);
+        if (result.error) {
+            throw new Error(result.error.details[0].message);
+        }
     }
     catch (err) {
         logger.error(`Counters data validation error. ${err}`);
@@ -216,7 +223,7 @@ function save_data_from_counters(resultJson) {
 
     let values_list = []
     for(let key of column_order){
-        values_list.push(counter_value_by_key[key])
+        values_list.push(remappedResultJson[key])
     }
 
     // TODO: JESLI WARTOSC NIE DZIALA TO WYWAL Z TABELKI?
@@ -251,7 +258,6 @@ async function save_data_from_nasa_counters(resultJson) {
                 .positive()
                 .required(),
         name: Joi.string()
-                .pattern(new RegExp('^\w+$'))
                 .required(),
         dir:  Joi.string()
                 .pattern(new RegExp('^(up?)|(d(own)?)$', 'i')) //ignore case
@@ -263,7 +269,10 @@ async function save_data_from_nasa_counters(resultJson) {
 
     for (let rec of resultJson) {
         try {
-            const value = data_validation_schema.validate(rec);
+            const result = data_validation_schema.validate(rec);
+            if (result.error) {
+                throw new Error(result.error.details[0].message);
+            }
         }
         catch (err) {
             logger.error(`Nasa counters data validation error. ${err}`)
