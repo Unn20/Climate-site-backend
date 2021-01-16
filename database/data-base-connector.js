@@ -2,6 +2,7 @@ const mysql = require('mysql')
 const fs = require('fs');
 const path = require('path');
 const Joi = require('joi');
+const logger = require('../logger');
 const { join } = require('path');
 
 console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString())
@@ -23,12 +24,10 @@ function save_data_from_apis(resultJson, api_database_mapping){
     api_validation_schema_mapping = {
         temperature: Joi.object({
             year: Joi.number()
-                    .number()
                     .integer()
                     .greater(1800)
                     .required(),
             month: Joi.number()
-                    .number()
                     .integer()
                     .min(1)
                     .max(12)
@@ -107,35 +106,40 @@ function save_data_from_apis(resultJson, api_database_mapping){
         })
     }
 
+    console.log(resultJson)
+    
+
     for (let key of Object.keys(resultJson)) {
         let data_list = resultJson[key]
+        console.log(data_list)
         if (data_list.length === 0) continue  //PRINT ERROR?
-        // let values_list = data_list.map(Object.values());  // FIXME
         let values_validator = api_validation_schema_mapping[key]
-        for (var i = values_list.length - 1; i >= 0; i--) {
+        for (var i = data_list.length - 1; i >= 0; i--) {
             try {
-                const value = await values_validator.validateAsync(values_list[i]);
+                const value = values_validator.validate(data_list[i]);
             }
             catch (err) {
-                console.log(`Splicing for ${key} -> ${values_list[i]}`)
-                values_list.splice(i, 1);
+                logger.error(`Splicing for ${key} -> ${data_list[i]}`)
+                data_list.splice(i, 1);
             }
         }
  
+        data_list = data_list.map(Object.values);
+        
         let table_name = api_database_mapping[key]
 
         let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
         // Get connection per query
         database_connection.getConnection(function(err, connection) {
             if(err) { 
-                console.log(err);
+                logger.error(err);
             }
-            connection.query(sql, [values_list], (err, ) => {
+            connection.query(sql, [data_list], (err, ) => {
             connection.release();
             if (err) {
-                console.log(err)
+                logger.error(err)
             } else {
-                console.log(`Data inserted into ${table_name}`);
+                logger.info(`Data inserted into ${table_name}`);
             }
         });}
         )}
@@ -151,7 +155,7 @@ async function get_table_data_from_db(query, stringify=true){
             connection.query(query, (err2, rows) => {
                 connection.release();
             if (err2) {
-                console.log(err2);
+                logger.error(err2);
             }
             if (stringify === true)
                 resolve(JSON.stringify(rows));
@@ -202,10 +206,10 @@ function save_data_from_counters(resultJson) {
     })
 
     try {
-        const value = await counters_validation_schema.validateAsync(counter_value_by_key);
+        const value = counters_validation_schema.validate(counter_value_by_key);
     }
     catch (err) {
-        console.log(`Counters data validation error. ${err}`);
+        logger.error(`Counters data validation error. ${err}`);
         skipRecord = true;
     }
     if (skipRecord) return; 
@@ -221,14 +225,14 @@ function save_data_from_counters(resultJson) {
     // Get connection per query
     database_connection.getConnection(function(err, connection) {
         if(err) {
-            console.log(err);
+            logger.error(err);
         }
         connection.query(sql, [values_list], (err, ) => {
             connection.release();
             if (err) {
-                console.log(err);
+                logger.error(err);
             } else {
-                console.log(`Data inserted into ${table_name}`);
+                logger.info(`Data inserted into ${table_name}`);
             }
         });}
     )
@@ -240,31 +244,32 @@ async function save_data_from_nasa_counters(resultJson) {
     const column_order = ['name', 'dir', 'val', 'unit'];
     const all_values = [];
     let values_list = [];
+    let skipRecord = false;
 
-    const data_validation_schema = Joi.Object({
+    const data_validation_schema = Joi.object({
         val: Joi.number()
                 .positive()
                 .required(),
         name: Joi.string()
                 .pattern(new RegExp('^\w+$'))
                 .required(),
-        dir = Joi.string()
+        dir:  Joi.string()
                 .pattern(new RegExp('^(up?)|(d(own)?)$', 'i')) //ignore case
                 .required(),
-        unit = Joi.string()
+        unit: Joi.string()
                 .required(),
     })
 
-    try {
-        const value = await data_validation_schema.validateAsync(resultJson);
-    }
-    catch (err) {
-        console.log(`Nasa counters data validation error. ${err}`)
-        skipRecord = true;
-    }
-    if (skipRecord) return; 
 
     for (let rec of resultJson) {
+        try {
+            const value = data_validation_schema.validate(rec);
+        }
+        catch (err) {
+            logger.error(`Nasa counters data validation error. ${err}`)
+            skipRecord = true;
+        }
+        if (skipRecord) return; 
         for (let key of keys_order) {
             const value = rec[key];
             values_list.push(value);
@@ -286,7 +291,7 @@ async function save_data_from_nasa_counters(resultJson) {
     }
 
     if (same_counter === 5) {
-        console.log("All nasa records are duplicated. SQL insertion stopped.");
+        logger.info("All nasa records are duplicated. SQL insertion stopped.");
         return;
     }
 
@@ -295,14 +300,14 @@ async function save_data_from_nasa_counters(resultJson) {
     // Get connection per query
     database_connection.getConnection(function(err, connection) {
         if(err) {
-            console.log(err);
+            logger.error(err);
         }
         connection.query(sql, [all_values], (err, ) => {
             connection.release();
             if (err) {
-                console.log(err);
+                logger.error(err);
             } else {
-                console.log(`Data inserted into ${table_name}`);
+                logger.info(`Data inserted into ${table_name}`);
             }
         });}
     )
