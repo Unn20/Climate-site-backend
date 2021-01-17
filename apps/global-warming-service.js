@@ -20,6 +20,7 @@ New data appears every one year. Data is gathered since 1979
 
 const http = require('http');
 const https = require('https');
+const Joi = require('joi');
 const dataBaseConnector = require("../database/data-base-connector");
 const logger = require('../logger');
 
@@ -63,7 +64,6 @@ class GlobalWarmingService {
         // logger.debug(resultJson)
         // Method to change key names in an object
         // resultJson.temperature = resultJson.temperature.map(({ time: year_day, ...rest }) => ({ year_day, ...rest }));
-
         dataBaseConnector.save_data_from_apis(resultJson, this.api_database_mapping);
     }
 
@@ -185,7 +185,7 @@ class GlobalWarmingService {
             logger.error(err)
         })
 
-        Promise.all([promise1, promise2, promise3, promise4, promise5]).then(() => {
+        Promise.all([promise1, promise2, promise3, promise4, promise5]).then((values) => {
             logger.info("Whole global-warming data has been fetched properly.")
             this.handleDatabase(resultJson)
         })
