@@ -9,13 +9,14 @@ before_script:
   - npm install pm2
 
 stages:
+  - test
   # - run
   - deploy
 
-# test: 
-#   stage: test
-#   script:
-#     - npm run test
+test: 
+  stage: test
+  script:
+    - npm run test
 
 # run:
 #   only:
