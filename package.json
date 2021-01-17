@@ -4,7 +4,7 @@
   "description": "Angular Backend",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "serve": "nodemon server.js"
   },
   "repository": {
@@ -33,5 +33,10 @@
     "urllib": "^2.36.1",
     "winston": "^3.3.3",
     "winston-mysql": "^0.9.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.2.1"
   }
 }

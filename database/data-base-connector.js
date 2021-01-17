@@ -2,7 +2,8 @@ const mysql = require('mysql')
 const fs = require('fs');
 const path = require('path');
 
-console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString())
+// console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString())
+fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString()
 
 /* Ponizej example z użycia bazy danych */
 // var database_connection = mysql.createConnection({
@@ -17,7 +18,7 @@ var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamkni
 })
 
 
-function save_data_from_apis(resultJson, api_database_mapping){
+function save_data_from_apis(resultJson, api_database_mapping) {
     for (let key of Object.keys(resultJson)) {
         let data_list = resultJson[key]
         let values_list = data_list.map(Object.values);
@@ -41,41 +42,43 @@ function save_data_from_apis(resultJson, api_database_mapping){
 
         let sql = `INSERT IGNORE INTO ${table_name} (` + Object.keys(data_list[0]).join(", ") + ") VALUES ?";
         // Get connection per query
-        database_connection.getConnection(function(err, connection) {
-            if(err) { 
+        database_connection.getConnection(function (err, connection) {
+            if (err) {
                 console.log(err);
             }
-            connection.query(sql, [values_list], (err, ) => {
-            connection.release();
-            if (err) {
-                console.log(err)
-            } else {
-                console.log(`Data inserted into ${table_name}`);
-            }
-        });}
-        )}
+            connection.query(sql, [values_list], (err,) => {
+                connection.release();
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log(`Data inserted into ${table_name}`);
+                }
+            });
+        }
+        )
+    }
 }
 
-async function get_table_data_from_db(query, stringify=true){
+async function get_table_data_from_db(query, stringify = true) {
     // table_name = 'temperature'
     // let sql = `SELECT * FROM ${table_name}`;
 
     return new Promise((resolve, reject) => {
         database_connection.getConnection(async (err, connection) => {
-            if (err){
+            if (err) {
                 reject(err);
             }
             connection.query(query, (err2, rows) => {
                 connection.release();
-            if (err2) {
-                console.log(err2);
-            }
-            if (stringify === true)
-                resolve(JSON.stringify(rows));
-            else
-                resolve(rows);
-        });
-      })
+                if (err2) {
+                    console.log(err2);
+                }
+                if (stringify === true)
+                    resolve(JSON.stringify(rows));
+                else
+                    resolve(rows);
+            });
+        })
     })
 }
 
@@ -101,18 +104,19 @@ function save_data_from_counters(resultJson) {
     let sql = `INSERT IGNORE INTO ${table_name} (` + column_order.join(", ") + ") VALUES (?)";
 
     // Get connection per query
-    database_connection.getConnection(function(err, connection) {
-        if(err) {
+    database_connection.getConnection(function (err, connection) {
+        if (err) {
             console.log(err);
         }
-        connection.query(sql, [values_list], (err, ) => {
+        connection.query(sql, [values_list], (err,) => {
             connection.release();
             if (err) {
                 console.log(err);
             } else {
                 console.log(`Data inserted into ${table_name}`);
             }
-        });}
+        });
+    }
     )
 }
 
@@ -152,18 +156,19 @@ async function save_data_from_nasa_counters(resultJson) {
     let sql = `INSERT IGNORE INTO ${table_name} (` + column_order.join(", ") + ") VALUES ?";
 
     // Get connection per query
-    database_connection.getConnection(function(err, connection) {
-        if(err) {
+    database_connection.getConnection(function (err, connection) {
+        if (err) {
             console.log(err);
         }
-        connection.query(sql, [all_values], (err, ) => {
+        connection.query(sql, [all_values], (err,) => {
             connection.release();
             if (err) {
                 console.log(err);
             } else {
                 console.log(`Data inserted into ${table_name}`);
             }
-        });}
+        });
+    }
     )
 }
 
