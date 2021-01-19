@@ -4,7 +4,7 @@
   "description": "Angular Backend",
   "main": "server.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --exit",
     "serve": "nodemon server.js"
   },
   "repository": {
