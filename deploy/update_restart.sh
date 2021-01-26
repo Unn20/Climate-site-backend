@@ -6,6 +6,7 @@ pm2 stop backend 2 > /dev/null || true
 
 cd /home/ubuntu/backend/
 
+git checkout -- .
 git checkout master
 git pull git@gitlab.com:inzynierka3/backend.git master
 
