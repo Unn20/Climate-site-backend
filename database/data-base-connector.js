@@ -14,7 +14,7 @@ var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamkni
     host: process.env.DB_HOST,
     user: process.env.DB_USER_BACKEND_NAME,
     password: process.env.DB_USER_BACKEND_PASSWORD,
-    database: process.env.DB_HOST,
+    database: process.env.DB_NAME,
     ssl: {
         ca: fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-root.pem'))
     }
