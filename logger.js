@@ -1,5 +1,6 @@
 const winston = require('winston');
 const { SQLTransport } = require('./database/winston-sql-transport')
+require('dotenv').config()
 
 /* Logger */
 const logger = winston.createLogger({
@@ -19,10 +20,10 @@ const logger = winston.createLogger({
         new SQLTransport({
             client: 'mysql',
             connection: {
-                host: 'backend-database.cwatox5ynlgb.eu-central-1.rds.amazonaws.com',
-                user: 'admin',
-                password: '3edcvfr4',
-                database: 'CLIMATE_DATA'
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER_ADMIN_NAME,
+                password: process.env.DB_USER_ADMIN_PASSWORD,
+                database: process.env.DB_NAME
             },
             name: 'MySQL',
             pool: {
@@ -41,7 +42,7 @@ const logger = winston.createLogger({
     ]
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.ENV !== 'production') {
     logger.add(new winston.transports.Console({
         format: winston.format.combine(
             winston.format.colorize(),
