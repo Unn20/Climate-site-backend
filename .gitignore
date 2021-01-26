@@ -5,6 +5,7 @@
 /ssl
 *.log
 package-lock.json
+.env
 
 # ALLOW
 !/ssl/rds-ca-2019-eu-central-1.pem

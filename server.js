@@ -5,6 +5,7 @@ const cors = require('cors')
 const Joi = require('joi')
 const cron = require('node-cron')
 const logger = require('./logger')
+require('dotenv').config()
 
 /* Subfiles */
 const appCats = require("./api/cats")
@@ -58,8 +59,9 @@ app.get("/", (req, res) => {
     res.status(200).send(`Hello world`);
 });
 
+
 // set port, listen for requests
-const port = process.env.PORT || 3000;
+const port = process.env.SERVER_PORT;
 app.listen(port, () => {
     logger.info(`Server started on port ${port}!`)
 })

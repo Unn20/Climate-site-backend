@@ -11,10 +11,10 @@ fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem'
 /* Ponizej example z użycia bazy danych */
 // var database_connection = mysql.createConnection({
 var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamknie polaczenie trzeba tworzyc nowe nie mozna kilku queries na raz itp
-    host: 'backend-database.cwatox5ynlgb.eu-central-1.rds.amazonaws.com',
-    user: 'backend',
-    password: 'LKlni7G83g82NB37asaw', // FIXME: UKRYWANIE HASEL!
-    database: 'CLIMATE_DATA',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER_BACKEND_NAME,
+    password: process.env.DB_USER_BACKEND_PASSWORD,
+    database: process.env.DB_NAME,
     ssl: {
         ca: fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-root.pem'))
     }
