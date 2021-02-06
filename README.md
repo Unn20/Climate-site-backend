@@ -1,5 +1,10 @@
 # Climate-site server backend
 
+![architecture](backend_architecture.png)
+
+![database](database_schema.png)
+
+
 ## 1.  Package installation
 	npm install
 
@@ -11,8 +16,3 @@
     - pm2 reload backend
     - pm2 stop backend
     - pm2 delete backend 
-
-
-#### Packages short description:
- - nodemon - gives ability to rerun server everytime there is change in files.
- - joi - very useful to validate requests from client
