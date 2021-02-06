@@ -34,13 +34,28 @@ app.use("/api/nasa-counters", appNasaCounters)
 
 
 const climateNasaGovScrapper = new ClimateNasaGovScrapper()
-climateNasaGovScrapper.run();
+logger.debug("climateNasaGovScrapper running..");
+try {
+    climateNasaGovScrapper.run();
+} catch (err) {
+    logger.error(`An error occured while using climateNasaGovScrapper! err = ${err}`)
+}
 
 const countersScrapper = new CountersScrapper()
-countersScrapper.run();
+logger.debug("countersScrapper running..");
+try {
+    countersScrapper.run();
+} catch (err) {
+    logger.error(`An error occured while using countersScrapper! err = ${err}`)
+}
 
 const globalWarmingService = new GlobalWarmingService(app)
-globalWarmingService.run()
+logger.debug("globalWarmingService running..");
+try {
+    globalWarmingService.run()
+} catch (err) {
+    logger.error(`An error occured while using globalWarmingService! err = ${err}`)
+}
 
 var cronJob = cron.schedule("0 2 * * *", () => {
     logger.debug("globalWarmingService running..");
