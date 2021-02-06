@@ -5,12 +5,9 @@ const Joi = require('joi');
 const logger = require('../logger');
 const { join } = require('path');
 
-// console.log(fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString())
 fs.readFileSync(path.join(__dirname, '..', 'ssl', 'rds-ca-2019-eu-central-1.pem')).toString()
 
-/* Ponizej example z użycia bazy danych */
-// var database_connection = mysql.createConnection({
-var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamknie polaczenie trzeba tworzyc nowe nie mozna kilku queries na raz itp
+var database_connection = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER_BACKEND_NAME,
     password: process.env.DB_USER_BACKEND_PASSWORD,
@@ -20,7 +17,6 @@ var database_connection = mysql.createPool({  //Pool jest lepszy, jak sie zamkni
     }
 })
 
-// TODO: MAX YEAR POBIERZ OBECNY ?
 function save_data_from_apis(resultJson, api_database_mapping) {
     api_validation_schema_mapping = {
         temperature: Joi.object({
@@ -110,7 +106,7 @@ function save_data_from_apis(resultJson, api_database_mapping) {
 
     for (let key of Object.keys(resultJson)) {
         let data_list = resultJson[key]
-        if (data_list.length === 0) continue  //PRINT ERROR?
+        if (data_list.length === 0) continue
         let values_validator = api_validation_schema_mapping[key]
         for (var i = data_list.length - 1; i >= 0; i--) {
             try {
@@ -227,7 +223,6 @@ function save_data_from_counters(resultJson) {
         values_list.push(remappedResultJson[key])
     }
 
-    // TODO: JESLI WARTOSC NIE DZIALA TO WYWAL Z TABELKI?
     let sql = `INSERT IGNORE INTO ${table_name} (` + column_order.join(", ") + ") VALUES (?)";
 
     // Get connection per query
