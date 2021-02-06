@@ -33,32 +33,36 @@ app.use("/api/counters", appCounters)
 app.use("/api/nasa-counters", appNasaCounters)
 
 
-// Every 10 seconds, visit other websites with climate data
 const climateNasaGovScrapper = new ClimateNasaGovScrapper()
-
-climateNasaGovScrapper.run(); // One time run
-// Every minute, visit other websites with climate data
+climateNasaGovScrapper.run();
 
 const countersScrapper = new CountersScrapper()
-
 countersScrapper.run();
 
 const globalWarmingService = new GlobalWarmingService(app)
-
 globalWarmingService.run()
-// var cronJob = cron.schedule("*/1000 * * * * *", () => {
-//
-//     globalWarmingService.run()
-//     console.info('cron job completed');
-// });
-// cronJob.start();
 
-
-// simple route
-app.get("/", (req, res) => {
-    res.status(200).send(`Hello world`);
+var cronJob = cron.schedule("0 2 * * *", () => {
+    logger.debug("globalWarmingService running..");
+    try {
+        globalWarmingService.run()
+    } catch (err) {
+        logger.error(`An error occured while using globalWarmingService! err = ${err}`)
+    }
+    logger.debug("countersScrapper running..");
+    try {
+        countersScrapper.run();
+    } catch (err) {
+        logger.error(`An error occured while using countersScrapper! err = ${err}`)
+    }
+    logger.debug("climateNasaGovScrapper running..");
+    try {
+        climateNasaGovScrapper.run();
+    } catch (err) {
+        logger.error(`An error occured while using climateNasaGovScrapper! err = ${err}`)
+    }
 });
-
+cronJob.start();
 
 // set port, listen for requests
 const port = process.env.SERVER_PORT;
