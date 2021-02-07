@@ -20,7 +20,6 @@ New data appears every one year. Data is gathered since 1979
 
 const http = require('http');
 const https = require('https');
-const Joi = require('joi');
 const dataBaseConnector = require("../database/data-base-connector");
 const logger = require('../logger');
 
