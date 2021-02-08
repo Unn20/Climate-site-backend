@@ -5,6 +5,8 @@ before_script:
   - mkdir -p ~/.ssh
   - eval $(ssh-agent -s)
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - echo "$BACKEND_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - ssh ubuntu@${DEPLOY_SERVER} test -f "/home/ubuntu/backend/.env" && scp ubuntu@${DEPLOY_SERVER}:/home/ubuntu/backend/.env . || echo ".env not found"
   - npm install
   - npm install pm2
 
