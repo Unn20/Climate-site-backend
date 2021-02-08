@@ -8,6 +8,7 @@ cd /home/ubuntu/backend/
 
 git checkout -- .
 git checkout master
+git fetch
 git pull git@gitlab.com:inzynierka3/backend.git master
 
 PATH=/home/ubuntu/node/bin:$PATH
